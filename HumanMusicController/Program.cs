@@ -22,7 +22,7 @@ namespace HumanMusicController
 
             var midiSender = new MidiSender("loopMIDI Port");
             var midiConnector = new MidiConnector(midiSender);
-            var recordConnecter = new RecordConnector(@"C:\Users\flori\Documents\DanceSensors\PolarH10\Records");
+            var recordConnecter = new RecordConnector(@"C:\Users\flori\Documents\DanceSensors\HumanMusicController\Records");
             var visualizationServerConnector = new VisualizationServerConnector("http://localhost:5253/heartbeatHub");
 
             if (bluetoothDeviceRequired)
@@ -45,7 +45,7 @@ namespace HumanMusicController
             else if (mode == "Replay")
             {
                 var replayLogfile = new ReplayRecordfile(host.Services.GetRequiredService<ILogger<ReplayRecordfile>>(), visualizationServerConnector);
-                replayLogfile.Play(@"C:\Users\flori\Documents\DanceSensors\PolarH10\Records\20230611T1138");
+                replayLogfile.Play(@"C:\Users\flori\Documents\DanceSensors\HumanMusicController\Records\20230611T1138");
             }
             else
             {
