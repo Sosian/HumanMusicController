@@ -12,7 +12,7 @@
 <div> Stopwatch: @stopwatchToString</div>
 
 <div
-    style="height: 50px; width: 10px; border-style: solid; border-color: black; background: linear-gradient(to top, black 80%, white 20%);">
+    style="height: 50px; width: 10px; border-style: solid; border-color: black; background: linear-gradient(to top, black @progressToString%, white @progressToString%);">
 </div>
 
 @code {
@@ -21,6 +21,9 @@
     string rotationValue = "25deg";
     string currentHeartbeat = "";
     string stopwatchToString = "";
+    int progress = 0;
+    int leftover = 100;
+    string progressToString = "";
     System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
 
     protected override async Task OnInitializedAsync()
@@ -57,9 +60,13 @@
             stopwatchToString = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
             ts.Hours, ts.Minutes, ts.Seconds,
             ts.Milliseconds / 10);
+            progress++;
+            leftover--;
+            progressToString = progress.ToString();
             StateHasChanged();
         }
     }
+
     private async Task Send()
     {
         if (hubConnection is not null)
