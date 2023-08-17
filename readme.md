@@ -8,7 +8,18 @@ Current approach:
 * Use a Blazor WASM Application (https://swharden.com/blog/2021-01-07-blazor-canvas-animated-graphics/) to draw
 * Use SignalR to push the data from the client Application to the WASM Application (https://stackoverflow.com/questions/11140164/signalr-console-app-example and https://learn.microsoft.com/en-us/aspnet/core/signalr/introduction?view=aspnetcore-7.0)
 
-Idea for Visualization:
-* Text which also Changes (Praise the)
-* Animate face rotation and Number (Pulsing?)
-* Bar which slowly fills
+Color Palette:
+#151F23 --background
+#25535D
+#5C662C
+#DDCF28
+#C9C947
+
+Possible Tasks:
+* Add text wich changes with bars (Praise the sun)
+* Animate face rotation and Number
+* Face gets more cthulu with bars
+* Add bars to progress bar
+* Arrange all the elements in Space
+* Move elements into individual blazor components
+
