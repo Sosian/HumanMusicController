@@ -5,12 +5,11 @@
 
 <PageTitle>Index</PageTitle>
 
-<img src="face.jpg" style="transform: rotate(@rotationValue); float: left" />
+<img id="face" src="face.jpg" style="margin: auto; display: block;" />
 
-<div style="float: right; font-size: 200px">@currentHeartbeat</div>
-
-
-<div> Stopwatch: @stopwatchToString</div>
+<div style="float: left; color: white;">
+    Heartbeat: @currentHeartbeat
+</div>
 
 <div
     style="height: 50px; width: 10px; border-style: solid; border-color: black; background: linear-gradient(to top, black @progressToString%, white @progressToString%);">
@@ -19,13 +18,18 @@
 @code {
     private HubConnection? hubConnection;
 
-    string rotationValue = "25deg";
     string currentHeartbeat = "";
     string stopwatchToString = "";
     int progress = 0;
-    int leftover = 100;
+    double averageHeartbeat = 70;
+    double minAverageHeartbeat = 70;
+    int maxAverageHeartbeat = 115;
     string progressToString = "";
-    System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
+    string spannweiteToString = "";
+    string averageHeartbeatToString = "";
+    double spannweiteBig = 1;
+
+    List<int> receivedHeartbeats = new List<int>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -35,37 +39,23 @@
 
         hubConnection.On<int>("ReceiveHeartbeat", (heartbeat) =>
         {
+            receivedHeartbeats.Add(heartbeat);
             currentHeartbeat = $"{heartbeat}";
 
-            if (rotationValue == "25deg")
-                rotationValue = "-25deg";
-            else
-                rotationValue = "25deg";
+            double spannweite = maxAverageHeartbeat - minAverageHeartbeat;
+            spannweiteToString = spannweite.ToString();
+            spannweiteBig = spannweite;
+
+            averageHeartbeat = (int)receivedHeartbeats.Average();
+            averageHeartbeatToString = averageHeartbeat.ToString();
+
+            progress = (int)((averageHeartbeat - minAverageHeartbeat) / spannweite) * 100;
+
+            progressToString = progress.ToString();
             StateHasChanged();
         });
 
         await hubConnection.StartAsync();
-
-        stopWatch.Start();
-        await StopWatch();
-
-    }
-
-    async Task StopWatch()
-    {
-        while (true)
-        {
-            await (Task.Delay(100));
-
-            TimeSpan ts = stopWatch.Elapsed;
-            stopwatchToString = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
-            ts.Hours, ts.Minutes, ts.Seconds,
-            ts.Milliseconds / 10);
-            progress++;
-            leftover--;
-            progressToString = progress.ToString();
-            StateHasChanged();
-        }
     }
 
     private async Task Send()
