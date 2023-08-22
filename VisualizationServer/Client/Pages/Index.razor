@@ -2,9 +2,12 @@
 @using Microsoft.AspNetCore.SignalR.Client
 @inject NavigationManager Navigation
 @implements IAsyncDisposable
+@inject IJSRuntime JS
 
 <PageTitle>Index</PageTitle>
-
+<audio id="metronomeSoundPlayer" src="MetronomeSound.wav">
+    Your browser does not support the html audio tag.
+</audio>
 <img id="face" src="face.jpg" style="margin: auto; display: block;" />
 
 <div style="float: left; color: white;">
@@ -37,9 +40,12 @@
         .WithUrl(Navigation.ToAbsoluteUri("/heartbeatHub"))
         .Build();
 
+        var soundMetronome = await JS.InvokeAsync<int>("setupSoundMetronome", "1000");
+
         hubConnection.On<int>("ReceiveHeartbeat", (heartbeat) =>
         {
             receivedHeartbeats.Add(heartbeat);
+
             currentHeartbeat = $"{heartbeat}";
 
             double spannweite = maxAverageHeartbeat - minAverageHeartbeat;
@@ -52,6 +58,7 @@
             progress = (int)((averageHeartbeat - minAverageHeartbeat) / spannweite) * 100;
 
             progressToString = progress.ToString();
+
             StateHasChanged();
         });
 

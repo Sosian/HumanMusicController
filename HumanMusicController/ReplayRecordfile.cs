@@ -35,6 +35,11 @@ namespace HumanMusicController
             {
                 Thread.Sleep(waitIntervalMiliseconds);
 
+                if (index >= listOfParsedReceivedPackages.Count - 1)
+                {
+                    index = 0;
+                    stopwatch = Stopwatch.StartNew();
+                }
 
                 if (currentPackage.elapsedMilliseconds <= stopwatch.ElapsedMilliseconds)
                 {

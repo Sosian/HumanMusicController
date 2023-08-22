@@ -44,7 +44,7 @@ namespace HumanMusicController
             }
             else if (mode == "Replay")
             {
-                var replayLogfile = new ReplayRecordfile(host.Services.GetRequiredService<ILogger<ReplayRecordfile>>(), visualizationServerConnector);
+                var replayLogfile = new ReplayRecordfile(host.Services.GetRequiredService<ILogger<ReplayRecordfile>>(), new CompoundConnector(new List<IConnector>() { midiConnector, visualizationServerConnector }));
                 replayLogfile.Play(@"C:\Users\flori\Documents\DanceSensors\HumanMusicController\Records\20230611T1138");
             }
             else

@@ -1,19 +1,15 @@
-var soundMetronomeInterval = null;
-var rotateValue = '25deg'
-
 function setupSoundMetronome(interval) {
-    if (soundMetronomeInterval != null) {
-        clearInterval(soundMetronomeInterval);
-    }
-
-    if (rotateValue == '25deg') {
-        rotateValue = '-25deg';
-    } else {
-        rotateValue = '25deg';
-    }
-
-    soundMetronomeInterval = setInterval(() => {
+    return setInterval(() => {
         document.getElementById('metronomeSoundPlayer').play();
-        document.getElementById('face').style.setProperty('transform', 'rotate(' + rotateValue + ')');
+
+        var rotateValue = document.getElementById('face').style.getPropertyValue('transform')
+
+        if (rotateValue == "rotate(25deg)") {
+            rotateValue = "rotate(-25deg)";
+        }
+        else {
+            rotateValue = "rotate(25deg)";
+        }
+        document.getElementById('face').style.setProperty('transform', rotateValue);
     }, interval);
 }
