@@ -3,6 +3,7 @@
 @inject NavigationManager Navigation
 @implements IAsyncDisposable
 @inject IJSRuntime JS
+@inject ILogger<Index> Logger
 
 <PageTitle>Index</PageTitle>
 <audio id="metronomeSoundPlayer" src="MetronomeSound.wav">
@@ -11,40 +12,61 @@
 <img id="face" src="face.jpg" style="margin: auto; display: block;" />
 
 <div style="float: left; color: white;">
-    Heartbeat: @currentHeartbeat
+    Heartbeat: @currentHeartbeat,- <br />
+    Average Heartbeat: @averageHeartbeat,<br />
+    Progress: @progressToString<br />
 </div>
 
-<div
-    style="height: 50px; width: 10px; border-style: solid; border-color: black; background: linear-gradient(to top, black @progressToString%, white @progressToString%);">
+<div style="position: relative;">
+    <div
+        style="position: absolute; left: 2px; height: 100px; width: 20px; border-style: solid; border-color: black; background: linear-gradient(to top, black @progressToString%, white @progressToString%);">
+    </div>
+
+
+    <div style="position: absolute; width: 27px; top: 66px; height: 2px; background-color: white;"></div>
+
+
+    <div style="position: absolute
+; width: 27px; top: 33px; height: 2px; background-color: white;"></div>
+
+
 </div>
+
+
 
 @code {
     private HubConnection? hubConnection;
 
     string currentHeartbeat = "";
-    string stopwatchToString = "";
     int progress = 0;
     double averageHeartbeat = 70;
     double minAverageHeartbeat = 70;
     int maxAverageHeartbeat = 115;
     string progressToString = "";
     string spannweiteToString = "";
-    string averageHeartbeatToString = "";
     double spannweiteBig = 1;
+    string averageHeartbeatToString = "";
+
+    int firstLevel = 0;
+    int secondLevel = 0;
 
     List<int> receivedHeartbeats = new List<int>();
 
     protected override async Task OnInitializedAsync()
     {
         hubConnection = new HubConnectionBuilder()
-        .WithUrl(Navigation.ToAbsoluteUri("/heartbeatHub"))
-        .Build();
+        .WithUrl(Navigation.ToAbsoluteUri("/heartbeatHub")).Build();
+
 
         var soundMetronome = await JS.InvokeAsync<int>("setupSoundMetronome", "1000");
+        //double spannweite = maxAverageHeartbeat - minAverageHeartbeat;
+        //firstLevel = Convert.ToInt32((spannweite * 0.3) + minAverageHeartbeat);
+        //secondLevel = Convert.ToInt32((spannweite * 0.6) + minAverageHeartbeat);
 
         hubConnection.On<int>("ReceiveHeartbeat", (heartbeat) =>
         {
             receivedHeartbeats.Add(heartbeat);
+            Logger.LogInformation("Heartbeat: " + heartbeat);
 
             currentHeartbeat = $"{heartbeat}";
 
@@ -55,8 +77,9 @@
             averageHeartbeat = (int)receivedHeartbeats.Average();
             averageHeartbeatToString = averageHeartbeat.ToString();
 
-            progress = (int)((averageHeartbeat - minAverageHeartbeat) / spannweite) * 100;
+            progress = (int)(((averageHeartbeat - minAverageHeartbeat) / spannweite) * 100);
 
+            Logger.LogInformation("Progess: " + progress);
             progressToString = progress.ToString();
 
             StateHasChanged();
@@ -65,16 +88,10 @@
         await hubConnection.StartAsync();
     }
 
-    private async Task Send()
-    {
-        if (hubConnection is not null)
-        {
-            await hubConnection.SendAsync("SendHeartbeat", 5);
-        }
-    }
 
-    public bool IsConnected =>
-    hubConnection?.State == HubConnectionState.Connected;
+
+    public bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
+
 
     public async ValueTask DisposeAsync()
     {
