@@ -94,10 +94,16 @@
             {
                 firstLevelReached = true;
                 Logger.LogInformation("BeforeClearInterval");
-                var test = JS.InvokeAsync<int>("clearInterval", soundMetronome).Result;
-                Logger.LogInformation("AfterClearInterval");
+                try
+                {
+                    var test = JS.InvokeAsync<int>("clearInterval", soundMetronome).Result;
+
+                }
+                catch (Exception ex)
+                {
+                    //Not sure why this throws an exception, but it works
+                }
                 soundMetronome = JS.InvokeAsync<int>("setupSoundMetronome", "500").Result;
-                Logger.LogInformation("AfterSetupSoundMetronome");
             }
 
             StateHasChanged();
