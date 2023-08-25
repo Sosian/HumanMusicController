@@ -1,4 +1,5 @@
 function setupSoundMetronome(interval) {
+    console.log("Invoked setupSoundMetronome with " + interval);
     return setInterval(() => {
         document.getElementById('metronomeSoundPlayer').play();
 

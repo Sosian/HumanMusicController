@@ -13,21 +13,23 @@
 
 <div style="float: left; color: white;">
     Heartbeat: @currentHeartbeat,- <br />
-    Average Heartbeat: @averageHeartbeat,<br />
-    Progress: @progressToString<br />
+    firstLevelPercentage: @firstLevelPercentage,<br />
+    secondLevelPercentage: @secondLevelPercentage<br />
 </div>
 
 <div style="position: relative;">
     <div
-        style="position: absolute; left: 2px; height: 100px; width: 20px; border-style: solid; border-color: black; background: linear-gradient(to top, black @progressToString%, white @progressToString%);">
+        style="position: absolute; left: 2px; height: 100px; width: 20px; border-style: solid; border-color: black; background: linear-gradient(to top, white @progressToString%, black @progressToString%);">
     </div>
 
 
-    <div style="position: absolute; width: 27px; top: 66px; height: 2px; background-color: white;"></div>
+    <div
+        style="position: absolute; width: 27px; top: @(100-firstLevelPercentage)px; height: 2px; background-color: white;">
+    </div>
 
-
-    <div style="position: absolute
-; width: 27px; top: 33px; height: 2px; background-color: white;"></div>
+    <div
+        style="position: absolute; width: 27px; top: @(100-secondLevelPercentage)px; height: 2px; background-color: white;">
+    </div>
 
 
 </div>
@@ -44,11 +46,16 @@
     int maxAverageHeartbeat = 115;
     string progressToString = "";
     string spannweiteToString = "";
-    double spannweiteBig = 1;
     string averageHeartbeatToString = "";
 
     int firstLevel = 0;
     int secondLevel = 0;
+
+    int firstLevelPercentage = 0;
+    int secondLevelPercentage = 0;
+
+    bool firstLevelReached = false;
+    bool secondLevelReached = false;
 
     List<int> receivedHeartbeats = new List<int>();
 
@@ -59,28 +66,39 @@
 
 
         var soundMetronome = await JS.InvokeAsync<int>("setupSoundMetronome", "1000");
-        //double spannweite = maxAverageHeartbeat - minAverageHeartbeat;
-        //firstLevel = Convert.ToInt32((spannweite * 0.3) + minAverageHeartbeat);
-        //secondLevel = Convert.ToInt32((spannweite * 0.6) + minAverageHeartbeat);
+        double spannweite = maxAverageHeartbeat - minAverageHeartbeat;
+        firstLevel = Convert.ToInt32((spannweite * 0.3) + minAverageHeartbeat);
+        secondLevel = Convert.ToInt32((spannweite * 0.6) + minAverageHeartbeat);
+
+        firstLevelPercentage = (int)(((firstLevel - minAverageHeartbeat) / spannweite) * 100);
+        secondLevelPercentage = (int)(((secondLevel - minAverageHeartbeat) / spannweite) * 100);
 
         hubConnection.On<int>("ReceiveHeartbeat", (heartbeat) =>
         {
             receivedHeartbeats.Add(heartbeat);
-            Logger.LogInformation("Heartbeat: " + heartbeat);
+            //Logger.LogInformation("Heartbeat: " + heartbeat);
 
             currentHeartbeat = $"{heartbeat}";
 
-            double spannweite = maxAverageHeartbeat - minAverageHeartbeat;
             spannweiteToString = spannweite.ToString();
-            spannweiteBig = spannweite;
 
             averageHeartbeat = (int)receivedHeartbeats.Average();
             averageHeartbeatToString = averageHeartbeat.ToString();
 
             progress = (int)(((averageHeartbeat - minAverageHeartbeat) / spannweite) * 100);
 
-            Logger.LogInformation("Progess: " + progress);
+            //Logger.LogInformation("Progess: " + progress);
             progressToString = progress.ToString();
+
+            if (progress >= firstLevelPercentage && !firstLevelReached)
+            {
+                firstLevelReached = true;
+                Logger.LogInformation("BeforeClearInterval");
+                var test = JS.InvokeAsync<int>("clearInterval", soundMetronome).Result;
+                Logger.LogInformation("AfterClearInterval");
+                soundMetronome = JS.InvokeAsync<int>("setupSoundMetronome", "500").Result;
+                Logger.LogInformation("AfterSetupSoundMetronome");
+            }
 
             StateHasChanged();
         });
