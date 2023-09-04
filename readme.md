@@ -9,17 +9,16 @@ Current approach:
 * Use SignalR to push the data from the client Application to the WASM Application (https://stackoverflow.com/questions/11140164/signalr-console-app-example and https://learn.microsoft.com/en-us/aspnet/core/signalr/introduction?view=aspnetcore-7.0)
 
 Color Palette:
-#151F23 --background
-#25535D
-#5C662C
-#DDCF28
-#C9C947
+#151F23 --background, very dark
+#25535D -- a little bit lighter blue
+#5C662C -- dark yellow
+#DDCF28 -- bright yellow
+#C9C947 --brighter yellow
 
 Possible Tasks:
-* Add text wich changes with bars (Praise the sun)
+* Tweak alignment so it fits better
+* Fix height calculation for level bars
 * Animate face rotation and Number
 * Face gets more cthulu with bars
-* Add bars to progress bar
-* Arrange all the elements in Space
 * Move elements into individual blazor components
 

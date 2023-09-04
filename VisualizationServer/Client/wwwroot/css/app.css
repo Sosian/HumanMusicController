@@ -1,41 +1,33 @@
-﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+﻿:root {
+    --progressbar-top-offset: 45%;
+    --progressbar-left-offset: 15vh;
+    --progressbar-width: 20vh;
+    --color-brightest-yellow: #C9C947;
+    --color-bright-yellow: #DDCF28;
+    --color-yellow: #5C662C;
+    --color-blue: #25535D;
+    --color-background: #151F23;
+
+}
+
+.column {
+    float: left;
+    height: 100vh;
+}
+
+.left,
+.right {
+    width: 25%;
+}
+
+.middle {
+    width: 50%;
+}
 
 html,
 body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background-color: #151F23;
-}
-
-h1:focus {
-    outline: none;
-}
-
-
-a,
-.btn-link {
-    color: #0071c1;
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
-.content {
-    padding-top: 1.1rem;
-}
-
-.valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
-}
-
-.invalid {
-    outline: 1px solid red;
-}
-
-.validation-message {
-    color: red;
+    background-color: var(--color-background);
 }
 
 #blazor-error-ui {

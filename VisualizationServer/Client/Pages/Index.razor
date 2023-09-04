@@ -9,37 +9,56 @@
 <audio id="metronomeSoundPlayer" src="MetronomeSound.wav">
     Your browser does not support the html audio tag.
 </audio>
-<img id="face" src="face.jpg" style="margin: auto; display: block;" />
 
-<div style="float: left; color: white;">
-    Heartbeat: @currentHeartbeat,- <br />
-    firstLevelPercentage: @firstLevelPercentage,<br />
-    secondLevelPercentage: @secondLevelPercentage<br />
+<div class="row">
+    <div class="column left">
+        <div>
+            <div
+                style="color: var(--color-bright-yellow); font-size: 88px; text-align: center; position: absolute; top: calc(var(--progressbar-top-offset) - 30%)">
+                Average <br /> Heartrate</div>
+            <div
+                style="position: absolute; left: var(--progressbar-left-offset); height: 50%; top: var(--progressbar-top-offset); width: var(--progressbar-width); border-style: solid; border-color: var(--color-yellow); background: linear-gradient(to top, white @progressToString%, black @progressToString%);">
+            </div>
+
+            <div
+                style="position: absolute; left: var(--progressbar-left-offset); width: var(--progressbar-width); top: calc(@(100-firstLevelPercentage)px + var(--progressbar-top-offset)); height: 2px; background-color: var(--color-yellow);">
+            </div>
+
+            <div
+                style="position: absolute; left: var(--progressbar-left-offset); width: var(--progressbar-width); top: calc(@(100-secondLevelPercentage)px + var(--progressbar-top-offset)); height: 2px; background-color: var(--color-yellow);">
+            </div>
+        </div>
+    </div>
+    <div class="column middle">
+        <div id="displayMessage"
+            style="color: var(--color-bright-yellow); font-size: 88px; text-align: center; margin-top: 20%">
+            Initializing</div>
+
+        <img id="face" src="face.jpg" style="margin: auto; margin-top: 20%; display: block;" />
+    </div>
+
+    <div class="column right">
+        <div style="color: var(--color-bright-yellow); font-size: 88px; text-align: center; margin-top: 20%">
+            Current <br />
+            Heartrate <br />
+            <br />
+            <span style="color: var(--color-yellow)">@currentHeartbeat</span>
+        </div>
+    </div>
 </div>
 
-<div style="position: relative;">
-    <div
-        style="position: absolute; left: 2px; height: 100px; width: 20px; border-style: solid; border-color: black; background: linear-gradient(to top, white @progressToString%, black @progressToString%);">
-    </div>
-
-
-    <div
-        style="position: absolute; width: 27px; top: @(100-firstLevelPercentage)px; height: 2px; background-color: white;">
-    </div>
-
-    <div
-        style="position: absolute; width: 27px; top: @(100-secondLevelPercentage)px; height: 2px; background-color: white;">
-    </div>
-
-
-</div>
-
-
+@* <div style="float: left; color: white;">
+Heartbeat: @currentHeartbeat,- <br />
+firstLevelPercentage: @firstLevelPercentage,<br />
+secondLevelPercentage: @secondLevelPercentage<br />
+</div> *@
 
 @code {
     private HubConnection? hubConnection;
 
-    string currentHeartbeat = "";
+    IEnumerable<string> displayMessages = new List<string>() { "Praise", "the", "Sun" };
+
+    string currentHeartbeat = "XX";
     int progress = 0;
     double averageHeartbeat = 70;
     double minAverageHeartbeat = 70;
@@ -65,7 +84,9 @@
         .WithUrl(Navigation.ToAbsoluteUri("/heartbeatHub")).Build();
 
 
-        var soundMetronome = await JS.InvokeAsync<int>("setupSoundMetronome", "1000");
+        var soundMetronomeInterval = await JS.InvokeAsync<int>("setupSoundMetronome", "1000");
+        var wordsInterval = await JS.InvokeAsync<int>("setupWords", "1000", displayMessages.First());
+
         double spannweite = maxAverageHeartbeat - minAverageHeartbeat;
         firstLevel = Convert.ToInt32((spannweite * 0.3) + minAverageHeartbeat);
         secondLevel = Convert.ToInt32((spannweite * 0.6) + minAverageHeartbeat);
@@ -93,17 +114,34 @@
             if (progress >= firstLevelPercentage && !firstLevelReached)
             {
                 firstLevelReached = true;
-                Logger.LogInformation("BeforeClearInterval");
                 try
                 {
-                    var test = JS.InvokeAsync<int>("clearInterval", soundMetronome).Result;
-
+                    var _ = JS.InvokeAsync<int>("clearInterval", soundMetronomeInterval).Result;
+                    var __ = JS.InvokeAsync<int>("clearInterval", wordsInterval).Result;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    //Not sure why this throws an exception, but it works
+                    //Not sure why this throws an exception, but it works when i just catch it
                 }
-                soundMetronome = JS.InvokeAsync<int>("setupSoundMetronome", "500").Result;
+
+                soundMetronomeInterval = JS.InvokeAsync<int>("setupSoundMetronome", "500").Result;
+                wordsInterval = JS.InvokeAsync<int>("setupWords", "1000", displayMessages.Take(2)).Result;
+            }
+            else if (progress >= secondLevelPercentage && !secondLevelReached)
+            {
+                secondLevelReached = true;
+                try
+                {
+                    var _ = JS.InvokeAsync<int>("clearInterval", soundMetronomeInterval).Result;
+                    var __ = JS.InvokeAsync<int>("clearInterval", wordsInterval).Result;
+                }
+                catch (Exception)
+                {
+                    //Not sure why this throws an exception, but it works when i just catch it
+                }
+
+                soundMetronomeInterval = JS.InvokeAsync<int>("setupSoundMetronome", "250").Result;
+                wordsInterval = JS.InvokeAsync<int>("setupWords", "1000", displayMessages).Result;
             }
 
             StateHasChanged();
