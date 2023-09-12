@@ -1,5 +1,5 @@
 ﻿:root {
-    --progressbar-top-offset: 45%;
+    --progressbar-top-offset: 25%;
     --progressbar-left-offset: 15vh;
     --progressbar-width: 20vh;
     --color-brightest-yellow: #C9C947;
@@ -13,6 +13,10 @@
 .column {
     float: left;
     height: 100vh;
+}
+
+.column.left {
+    position: relative;
 }
 
 .left,

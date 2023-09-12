@@ -14,18 +14,15 @@
     <div class="column left">
         <div>
             <div
-                style="color: var(--color-bright-yellow); font-size: 68px; text-align: center; position: absolute; top: calc(var(--progressbar-top-offset) - 30%)">
-                Average <br /> Heartrate</div>
-            <div
-                style="position: absolute; left: var(--progressbar-left-offset); height: 50%; top: var(--progressbar-top-offset); width: var(--progressbar-width); border-style: solid; border-color: var(--color-yellow); background: linear-gradient(to top, white @progressToString%, black @progressToString%);">
+                style="position: absolute; left: var(--progressbar-left-offset); height: @(progressbarHeight)px; top: var(--progressbar-top-offset); width: var(--progressbar-width); border-style: solid; border-color: var(--color-yellow); background: linear-gradient(to top, white @progressToString%, black @progressToString%);">
             </div>
 
             <div
-                style="position: absolute; left: var(--progressbar-left-offset); width: var(--progressbar-width); top: calc(@(100-firstLevelPercentage)px + var(--progressbar-top-offset)); height: 2px; background-color: var(--color-yellow);">
+                style="position: absolute; left: var(--progressbar-left-offset); width: var(--progressbar-width); top: calc(@(firstLevelProgressbar)px + var(--progressbar-top-offset)); height: 2px; background-color: var(--color-yellow);">
             </div>
 
             <div
-                style="position: absolute; left: var(--progressbar-left-offset); width: var(--progressbar-width); top: calc(@(100-secondLevelPercentage)px + var(--progressbar-top-offset)); height: 2px; background-color: var(--color-yellow);">
+                style="position: absolute; left: var(--progressbar-left-offset); width: var(--progressbar-width); top: calc(@(secondLevelProgressbar)px + var(--progressbar-top-offset)); height: 2px; background-color: var(--color-yellow);">
             </div>
         </div>
     </div>
@@ -59,6 +56,10 @@ secondLevelPercentage: @secondLevelPercentage<br />
     IEnumerable<string> displayMessages = new List<string>() { "Praise", "the", "Sun" };
 
     string currentHeartbeat = "XX";
+    int progressbarHeight = 400;
+    int firstLevelProgressbar = 0;
+    int secondLevelProgressbar = 0;
+
     int progress = 0;
     double averageHeartbeat = 70;
     double minAverageHeartbeat = 70;
@@ -93,6 +94,9 @@ secondLevelPercentage: @secondLevelPercentage<br />
 
         firstLevelPercentage = (int)(((firstLevel - minAverageHeartbeat) / spannweite) * 100);
         secondLevelPercentage = (int)(((secondLevel - minAverageHeartbeat) / spannweite) * 100);
+
+        firstLevelProgressbar = (int)(progressbarHeight - (progressbarHeight * ((double)firstLevelPercentage / 100)));
+        secondLevelProgressbar = (int)(progressbarHeight - (progressbarHeight * ((double)secondLevelPercentage / 100)));
 
         hubConnection.On<int>("ReceiveHeartbeat", (heartbeat) =>
         {
