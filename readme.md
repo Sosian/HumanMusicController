@@ -21,4 +21,5 @@ Possible Tasks:
 * Animate face rotation and Number
 * Face gets more cthulu with bars
 * Move elements into individual blazor components
-
+* Borrowed hearbeat animation from https://foolishdeveloper.com/css-heartbeat-animation/
+* Have to fix Words again

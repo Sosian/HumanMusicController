@@ -14,6 +14,11 @@ function setupWords(interval, wordsArray) {
     }, interval);
 }
 
+function setDisplayBlockForPulse() {
+    document.getElementById('pulse').style.setProperty('display', 'none');
+    document.getElementById('pulse').style.setProperty('display', 'block');
+}
+
 function setupSoundMetronome(interval) {
 
     return setInterval(() => {

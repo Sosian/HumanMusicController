@@ -12,9 +12,26 @@
 
 <div class="row">
     <div class="column left">
+        <div id="pulse" class="pulse"></div>
+        <span
+            style="color: var(--color-yellow); text-align: center; font-size: 55px; position: absolute; top: 28vh; left: 9vw; font-family: 'Brush Script MT';">@currentHeartbeat</span>
+    </div>
+    <div class="column middle">
+        <img id="base" src="base.png"
+            style="top: 10vh; left: var(--statue-left-offset); position: absolute; max-width:90%; max-height: 90%;" />
+
+        <div id="displayMessage"
+            style="color: var(--color-background); font-size: 55px; left: calc(var(--statue-left-offset) + 16vw); top: 77vh; position: absolute; -webkit-text-stroke: 0.2px white;">
+            Initializing</div>
+
+        <img id="face" src="face.png"
+            style="top: 0; left: calc(var(--statue-left-offset) + 14vw); position: absolute;" />
+    </div>
+
+    <div class="column right">
         <div>
             <div
-                style="position: absolute; left: var(--progressbar-left-offset); height: @(progressbarHeight)px; top: var(--progressbar-top-offset); width: var(--progressbar-width); border-style: solid; border-color: var(--color-yellow); background: linear-gradient(to top, white @progressToString%, black @progressToString%);">
+                style="position: absolute; left: var(--progressbar-left-offset); height: @(progressbarHeight)px; top: var(--progressbar-top-offset); width: var(--progressbar-width); border-radius: 25px; border-style: solid; border-color: var(--color-yellow); background: linear-gradient(to top, white @progressToString%, black @progressToString%);">
             </div>
 
             <div
@@ -26,29 +43,7 @@
             </div>
         </div>
     </div>
-    <div class="column middle">
-        <div id="displayMessage"
-            style="color: var(--color-bright-yellow); font-size: 88px; text-align: center; margin-top: 20%">
-            Initializing</div>
-
-        <img id="face" src="face.jpg" style="margin: auto; margin-top: 20%; display: block;" />
-    </div>
-
-    <div class="column right">
-        <div style="color: var(--color-bright-yellow); font-size: 68px; text-align: center; margin-top: 20%">
-            Current <br />
-            Heartrate <br />
-            <br />
-            <span style="color: var(--color-yellow)">@currentHeartbeat</span>
-        </div>
-    </div>
 </div>
-
-@* <div style="float: left; color: white;">
-Heartbeat: @currentHeartbeat,- <br />
-firstLevelPercentage: @firstLevelPercentage,<br />
-secondLevelPercentage: @secondLevelPercentage<br />
-</div> *@
 
 @code {
     private HubConnection? hubConnection;
@@ -101,9 +96,17 @@ secondLevelPercentage: @secondLevelPercentage<br />
         hubConnection.On<int>("ReceiveHeartbeat", (heartbeat) =>
         {
             receivedHeartbeats.Add(heartbeat);
-            //Logger.LogInformation("Heartbeat: " + heartbeat);
-
             currentHeartbeat = $"{heartbeat}";
+
+            try
+            {
+                var temp1 = JS.InvokeAsync<int>("setDisplayBlockForPulse").Result;
+            }
+            catch (Exception)
+            {
+                //Not sure why this throws an exception, but everything works when i just catch it
+            }
+
 
             spannweiteToString = spannweite.ToString();
 
@@ -112,7 +115,6 @@ secondLevelPercentage: @secondLevelPercentage<br />
 
             progress = (int)(((averageHeartbeat - minAverageHeartbeat) / spannweite) * 100);
 
-            //Logger.LogInformation("Progess: " + progress);
             progressToString = progress.ToString();
 
             if (progress >= firstLevelPercentage && !firstLevelReached)
@@ -120,12 +122,12 @@ secondLevelPercentage: @secondLevelPercentage<br />
                 firstLevelReached = true;
                 try
                 {
-                    var _ = JS.InvokeAsync<int>("clearInterval", soundMetronomeInterval).Result;
-                    var __ = JS.InvokeAsync<int>("clearInterval", wordsInterval).Result;
+                    var temp2 = JS.InvokeAsync<int>("clearInterval", soundMetronomeInterval).Result;
+                    var temp3 = JS.InvokeAsync<int>("clearInterval", wordsInterval).Result;
                 }
                 catch (Exception)
                 {
-                    //Not sure why this throws an exception, but it works when i just catch it
+                    //Not sure why this throws an exception, but everything works when i just catch it
                 }
 
                 soundMetronomeInterval = JS.InvokeAsync<int>("setupSoundMetronome", "500").Result;
