@@ -34,6 +34,18 @@ body {
     background-color: var(--color-background);
 }
 
+#displayMessage {
+    color: var(--color-background);
+    font-size: 55px;
+    left: calc(var(--statue-left-offset) + 14vw);
+    top: 77vh;
+    position: absolute;
+    -webkit-text-stroke: 0.2px white;
+    width: 200px;
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
 .pulse {
     height: 100px;
     width: 200px;
@@ -62,12 +74,12 @@ body {
 .pulse:before {
     content: "";
     display: block;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200px 100px"><polyline fill="none" stroke-width="3px" stroke="white" points="2.4,58.7 70.8,58.7 76.1,46.2 81.1,58.7 89.9,58.7 93.8,66.5 102.8,22.7 110.6,78.7 115.3,58.7 126.4,58.7 134.4,54.7 142.4,58.7 197.8,58.7 "/></svg>') 0 0 no-repeat;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200px 100px"><polyline fill="none" stroke-width="3px" stroke="%23C9C947" points="2.4,58.7 70.8,58.7 76.1,46.2 81.1,58.7 89.9,58.7 93.8,66.5 102.8,22.7 110.6,78.7 115.3,58.7 126.4,58.7 134.4,54.7 142.4,58.7 197.8,58.7 "/></svg>') 0 0 no-repeat;
     width: 100%;
     height: 100%;
     position: absolute;
-    -webkit-animation: 500ms pulse linear forwards;
-    animation: 500ms pulse linear forwards;
+    -webkit-animation: 500ms pulse linear forwards infinite;
+    animation: 500ms pulse linear forwards infinite;
 }
 
 @-webkit-keyframes pulse {
@@ -137,5 +149,91 @@ body {
     100% {
         clip: rect(0, 200px, 100px, 200px);
         display: none;
+    }
+}
+
+.bubble {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    top: 12vh;
+    left: 15vw;
+    border-radius: 50%;
+    background-color: var(--color-brightest-yellow);
+    opacity: 0.9;
+    -webkit-animation: bubble1-h-movement 1s ease-in infinite, bubble1-v-movement 300ms ease-in-out infinite alternate, bubble-scale-movement 300ms ease-in-out infinite alternate;
+    animation: bubble1-h-movement 1s ease-in infinite, bubble1-v-movement 300ms ease-in-out infinite alternate, bubble-scale-movement 300ms ease-in-out infinite alternate;
+}
+
+.bubble:after {
+    position: absolute;
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--color-brightest-yellow);
+    opacity: 0.9;
+}
+
+.bubble:after {
+    /*top: 50;*/
+    left: 50px;
+    width: 9px;
+    height: 9px;
+}
+
+@keyframes bubble1-h-movement {
+    0% {
+        margin-left: 4vw;
+        background-color: var(--color-brightest-yellow);
+    }
+
+    50% {
+        background-color: var(--color-bright-yellow);
+    }
+
+    100% {
+        margin-left: 55vw;
+        background-color: var(--color-yellow);
+    }
+}
+
+@keyframes bubble2-h-movement {
+    0% {
+        margin-left: -5%;
+    }
+
+    100% {
+        margin-left: 65%;
+    }
+}
+
+@keyframes bubble1-v-movement {
+    0% {
+        margin-top: 165px;
+    }
+
+    100% {
+        margin-top: 115px;
+    }
+}
+
+@keyframes bubble2-v-movement {
+    0% {
+        margin-top: 90px;
+    }
+
+    100% {
+        margin-top: 115px;
+    }
+}
+
+@keyframes bubble-scale-movement {
+    0% {
+        transform: scale(1.4);
+    }
+
+    100% {
+        transform: scale(0.9);
     }
 }

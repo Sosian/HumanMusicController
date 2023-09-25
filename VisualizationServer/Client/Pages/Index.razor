@@ -12,6 +12,7 @@
 
 <div class="row">
     <div class="column left">
+        <div class="bubble"></div>
         <div id="pulse" class="pulse"></div>
         <span
             style="color: var(--color-yellow); text-align: center; font-size: 55px; position: absolute; top: 28vh; left: 9vw; font-family: 'Brush Script MT';">@currentHeartbeat</span>
@@ -20,9 +21,7 @@
         <img id="base" src="base.png"
             style="top: 10vh; left: var(--statue-left-offset); position: absolute; max-width:90%; max-height: 90%;" />
 
-        <div id="displayMessage"
-            style="color: var(--color-background); font-size: 55px; left: calc(var(--statue-left-offset) + 16vw); top: 77vh; position: absolute; -webkit-text-stroke: 0.2px white;">
-            Initializing</div>
+        <div id="displayMessage">Initializing</div>
 
         <img id="face" src="face.png"
             style="top: 0; left: calc(var(--statue-left-offset) + 14vw); position: absolute;" />
@@ -81,7 +80,7 @@
 
 
         var soundMetronomeInterval = await JS.InvokeAsync<int>("setupSoundMetronome", "1000");
-        var wordsInterval = await JS.InvokeAsync<int>("setupWords", "1000", displayMessages.First());
+        var wordsInterval = await JS.InvokeAsync<int>("setupWords", "1000", displayMessages);
 
         double spannweite = maxAverageHeartbeat - minAverageHeartbeat;
         firstLevel = Convert.ToInt32((spannweite * 0.3) + minAverageHeartbeat);
