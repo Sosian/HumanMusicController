@@ -13,6 +13,7 @@
 <div class="row">
     <div class="column left">
         <div class="bubble"></div>
+        <div class="bubble"></div>
         <div id="pulse" class="pulse"></div>
         <span
             style="color: var(--color-yellow); text-align: center; font-size: 55px; position: absolute; top: 28vh; left: 9vw; font-family: 'Brush Script MT';">@currentHeartbeat</span>
@@ -30,7 +31,7 @@
     <div class="column right">
         <div>
             <div
-                style="position: absolute; left: var(--progressbar-left-offset); height: @(progressbarHeight)px; top: var(--progressbar-top-offset); width: var(--progressbar-width); border-radius: 25px; border-style: solid; border-color: var(--color-yellow); background: linear-gradient(to top, white @progressToString%, black @progressToString%);">
+                style="position: absolute; left: var(--progressbar-left-offset); height: @(progressbarHeight)px; top: var(--progressbar-top-offset); width: var(--progressbar-width); border-radius: 25px; border-style: solid; border-color: var(--color-yellow); background: linear-gradient(to top, var(--color-yellow) @progressToString%, var(--color-background) @progressToString%);">
             </div>
 
             <div

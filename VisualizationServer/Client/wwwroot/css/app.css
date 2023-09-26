@@ -1,5 +1,5 @@
-﻿:root {
-    --progressbar-top-offset: 25%;
+:root {
+    --progressbar-top-offset: 15%;
     --progressbar-left-offset: 80vw;
     --progressbar-width: 10vw;
     --statue-left-offset: 30vw;
@@ -8,7 +8,6 @@
     --color-yellow: #5C662C;
     --color-blue: #25535D;
     --color-background: #151F23;
-
 }
 
 .column {
@@ -156,13 +155,17 @@ body {
     position: absolute;
     width: 7px;
     height: 7px;
-    top: 12vh;
-    left: 15vw;
+    top: 30vh;
+    left: 14vw;
     border-radius: 50%;
     background-color: var(--color-brightest-yellow);
     opacity: 0.9;
-    -webkit-animation: bubble1-h-movement 1s ease-in infinite, bubble1-v-movement 300ms ease-in-out infinite alternate, bubble-scale-movement 300ms ease-in-out infinite alternate;
-    animation: bubble1-h-movement 1s ease-in infinite, bubble1-v-movement 300ms ease-in-out infinite alternate, bubble-scale-movement 300ms ease-in-out infinite alternate;
+    -webkit-animation: bubble1-h-movement 1500ms ease-in infinite, bubble1-v-movement 600ms ease-in-out infinite alternate, bubble-scale-movement 600ms ease-in-out infinite alternate;
+    animation: bubble1-h-movement 1500ms ease-in infinite, bubble1-v-movement 600ms ease-in-out infinite alternate, bubble-scale-movement 600ms ease-in-out infinite alternate;
+}
+
+.bubble:nth-child(1) {
+    animation-delay: .5s
 }
 
 .bubble:after {
@@ -176,10 +179,10 @@ body {
 }
 
 .bubble:after {
-    /*top: 50;*/
-    left: 50px;
-    width: 9px;
-    height: 9px;
+    /* top: 50px; */
+    left: 25px;
+    width: 12px;
+    height: 12px;
 }
 
 @keyframes bubble1-h-movement {
@@ -193,7 +196,7 @@ body {
     }
 
     100% {
-        margin-left: 55vw;
+        margin-left: 60vw;
         background-color: var(--color-yellow);
     }
 }
@@ -203,6 +206,10 @@ body {
         margin-left: -5%;
     }
 
+    50% {
+        margin-left: 30%;
+    }
+
     100% {
         margin-left: 65%;
     }
@@ -210,21 +217,21 @@ body {
 
 @keyframes bubble1-v-movement {
     0% {
-        margin-top: 165px;
+        margin-top: 135px;
     }
 
     100% {
-        margin-top: 115px;
+        margin-top: 110px;
     }
 }
 
 @keyframes bubble2-v-movement {
     0% {
-        margin-top: 90px;
+        margin-top: 80px;
     }
 
     100% {
-        margin-top: 115px;
+        margin-top: 125px;
     }
 }
 
@@ -237,3 +244,5 @@ body {
         transform: scale(0.9);
     }
 }
+
+div {}
