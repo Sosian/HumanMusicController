@@ -19,6 +19,13 @@
     position: relative;
 }
 
+.spark {
+    background-color: white;
+    transform: rotateZ(45deg);
+}
+
+.spark {}
+
 .left,
 .right {
     width: 25%;
