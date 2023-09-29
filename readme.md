@@ -15,11 +15,11 @@ Color Palette:
 #DDCF28 -- bright yellow
 #C9C947 --brighter yellow
 
-Possible Tasks:
-* Tweak alignment so it fits better
-* Fix height calculation for level bars
-* Animate face rotation and Number
-* Face gets more cthulu with bars
-* Move elements into individual blazor components
 * Borrowed hearbeat animation from https://foolishdeveloper.com/css-heartbeat-animation/
-* Have to fix Words again
+
+Possible Tasks:
+* Heartbeat and subsequent animation get triggered by sound
+* Animate impact
+* Fix Progressbar to display cumulative Hearts
+* Last Level: Background color switched to brightest Yellow, face changed to sunflower
+* TODO: Can i quickly get a connection working, so the sound changes too on the last level?

@@ -1,8 +1,9 @@
-:root {
+﻿:root {
     --progressbar-top-offset: 15%;
     --progressbar-left-offset: 80vw;
     --progressbar-width: 10vw;
     --statue-left-offset: 30vw;
+    --bubbles-top-offset: 30vh;
     --color-brightest-yellow: #C9C947;
     --color-bright-yellow: #DDCF28;
     --color-yellow: #5C662C;
@@ -18,13 +19,6 @@
 .column.left {
     position: relative;
 }
-
-.spark {
-    background-color: white;
-    transform: rotateZ(45deg);
-}
-
-.spark {}
 
 .left,
 .right {
@@ -162,13 +156,13 @@ body {
     position: absolute;
     width: 7px;
     height: 7px;
-    top: 30vh;
+    top: var(--bubbles-top-offset);
     left: 14vw;
     border-radius: 50%;
     background-color: var(--color-brightest-yellow);
     opacity: 0.9;
-    -webkit-animation: bubble1-h-movement 1500ms ease-in infinite, bubble1-v-movement 600ms ease-in-out infinite alternate, bubble-scale-movement 600ms ease-in-out infinite alternate;
-    animation: bubble1-h-movement 1500ms ease-in infinite, bubble1-v-movement 600ms ease-in-out infinite alternate, bubble-scale-movement 600ms ease-in-out infinite alternate;
+    -webkit-animation: bubble1-h-movement 1600ms ease-in infinite, bubble-scale-movement 400ms ease-in-out infinite alternate, bubble1-v-movement 400ms ease-in-out infinite alternate;
+    animation: bubble1-h-movement 1600ms ease-in infinite, bubble-scale-movement 400ms ease-in-out infinite alternate, bubble1-v-movement 400ms ease-in-out infinite alternate;
 }
 
 .bubble:nth-child(1) {
@@ -186,7 +180,7 @@ body {
 }
 
 .bubble:after {
-    /* top: 50px; */
+    /*top: 50px;  */
     left: 25px;
     width: 12px;
     height: 12px;
@@ -203,22 +197,8 @@ body {
     }
 
     100% {
-        margin-left: 60vw;
+        margin-left: 63vw;
         background-color: var(--color-yellow);
-    }
-}
-
-@keyframes bubble2-h-movement {
-    0% {
-        margin-left: -5%;
-    }
-
-    50% {
-        margin-left: 30%;
-    }
-
-    100% {
-        margin-left: 65%;
     }
 }
 
@@ -232,24 +212,12 @@ body {
     }
 }
 
-@keyframes bubble2-v-movement {
-    0% {
-        margin-top: 80px;
-    }
-
-    100% {
-        margin-top: 125px;
-    }
-}
-
 @keyframes bubble-scale-movement {
     0% {
         transform: scale(1.4);
     }
 
     100% {
-        transform: scale(0.9);
+        transform: scale(0.8);
     }
 }
-
-div {}

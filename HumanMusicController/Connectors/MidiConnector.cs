@@ -11,7 +11,7 @@ namespace HumanMusicController.Connectors
 
         public void ReceiveData(HrPayload hrPayload)
         {
-            midiSender.SendMidiMsg(hrPayload.Heartrate - 40);
+            midiSender.SendMidiMsg(hrPayload.Heartrate);
         }
     }
 }

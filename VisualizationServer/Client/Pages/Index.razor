@@ -29,7 +29,18 @@
 
     <div class="column right">
         <div>
-            <div class="spark" style="width: 30px; height: 1px; transform: rotateZ(85deg)"></div>
+            <div class="spark"
+                style="width: 30px; height: 1px; transform: rotateZ(75deg); background-color: white; position: absolute; top: calc(var(--bubbles-top-offset) + 15vh); left: calc(var(--progressbar-left-offset) - 1vw);">
+            </div>
+            <div class="spark"
+                style="width: 20px; height: 1px; transform: rotateZ(45deg); background-color: white; position: absolute; top: calc(var(--bubbles-top-offset) + 15vh); left: calc(var(--progressbar-left-offset) - 1vw);">
+            </div>
+            <div class="spark"
+                style="width: 20px; height: 1px; transform: rotateZ(-45deg); background-color: white; position: absolute; top: calc(var(--bubbles-top-offset) + 15vh); left: calc(var(--progressbar-left-offset) - 1vw);">
+            </div>
+            <div class="spark"
+                style="width: 30px; height: 1px; transform: rotateZ(-75deg); background-color: white; position: absolute; top: calc(var(--bubbles-top-offset) + 15vh); left: calc(var(--progressbar-left-offset) - 1vw);">
+            </div>
             <div
                 style="position: absolute; left: var(--progressbar-left-offset); height: @(progressbarHeight)px; top: var(--progressbar-top-offset); width: var(--progressbar-width); border-radius: 25px; border-style: solid; border-color: var(--color-yellow); background: linear-gradient(to top, var(--color-yellow) @progressToString%, var(--color-background) @progressToString%);">
             </div>
