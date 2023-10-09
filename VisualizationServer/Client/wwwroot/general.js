@@ -17,6 +17,12 @@ function setupWords(interval, wordsArray) {
 function setDisplayBlockForPulse() {
     document.getElementById('pulse').style.setProperty('display', 'none');
     document.getElementById('pulse').style.setProperty('display', 'block');
+
+    document.getElementById('bubble').style.setProperty('display', 'none');
+    document.getElementById('bubble').style.setProperty('display', 'block');
+
+    document.getElementById('spark').style.setProperty('display', 'none');
+    document.getElementById('spark').style.setProperty('display', 'block');
 }
 
 function setupSoundMetronome(interval) {
