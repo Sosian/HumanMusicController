@@ -15,11 +15,9 @@ Color Palette:
 #DDCF28 -- bright yellow
 #C9C947 --brighter yellow
 
-* Borrowed hearbeat animation from https://foolishdeveloper.com/css-heartbeat-animation/
+* Borrowed heartbeat animation from https://foolishdeveloper.com/css-heartbeat-animation/
 
 Possible Tasks:
-* Heartbeat and subsequent animation get triggered by sound
-* Animate impact
-* Fix Progressbar to display cumulative Hearts
 * Last Level: Background color switched to brightest Yellow, face changed to sunflower
-* TODO: Can i quickly get a connection working, so the sound changes too on the last level?
+* Levels are broken again, fix them
+* Sometimes the heartbeat does not show up, not sure why

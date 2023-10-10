@@ -16,13 +16,14 @@ function setupWords(interval, wordsArray) {
 
 function setDisplayBlockForPulse() {
     document.getElementById('pulse').style.setProperty('display', 'none');
-    document.getElementById('pulse').style.setProperty('display', 'block');
+    var millisecondsToWait = 10;
+    setTimeout(function () {
+        document.getElementById('pulse').style.setProperty('display', 'block');
+    }, millisecondsToWait);
 
-    document.getElementById('bubble').style.setProperty('display', 'none');
-    document.getElementById('bubble').style.setProperty('display', 'block');
-
-    document.getElementById('spark').style.setProperty('display', 'none');
-    document.getElementById('spark').style.setProperty('display', 'block');
+    var bubble = document.createElement("div");
+    bubble.className = "bubble";
+    document.getElementById('bubbleSpawner').appendChild(bubble);
 }
 
 function setupSoundMetronome(interval) {

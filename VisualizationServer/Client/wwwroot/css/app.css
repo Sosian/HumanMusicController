@@ -78,7 +78,7 @@ body {
     width: 100%;
     height: 100%;
     position: absolute;
-    animation: 500ms pulse linear forwards;
+    animation: 400ms pulse linear forwards;
 }
 
 @keyframes pulse {
@@ -120,13 +120,14 @@ body {
     width: 7px;
     height: 7px;
     top: var(--bubbles-top-offset);
-    left: 14vw;
+    left: 16vw;
     border-radius: 50%;
     background-color: var(--color-brightest-yellow);
     opacity: 0.9;
     visibility: hidden;
-    animation-delay: 500ms;
-    animation: bubble1-h-movement 1600ms ease-in, bubble-scale-movement 1600ms ease-in-out alternate, bubble1-v-movement 1600ms ease-in-out alternate;
+    animation: bubble1-h-movement linear, bubble-scale-movement ease-in-out alternate, bubble1-v-movement ease-in-out alternate;
+    animation-delay: 350ms;
+    animation-duration: 1600ms;
 }
 
 .spark {
@@ -139,9 +140,9 @@ body {
     left: calc(var(--progressbar-left-offset));
     width: 20px;
     visibility: hidden;
-    animation-delay: 2100ms;
-    animation-duration: 1s;
     animation: sparkler-sparkle;
+    animation-delay: 2050ms;
+    animation-duration: 500ms;
 }
 
 @keyframes sparkler-sparkle {
@@ -170,23 +171,6 @@ body {
     100% {
         opacity: 0;
     }
-}
-
-.bubble:after {
-    position: absolute;
-    content: "";
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background-color: var(--color-brightest-yellow);
-    opacity: 0.9;
-}
-
-.bubble:after {
-    /*top: 50px;  */
-    left: 25px;
-    width: 12px;
-    height: 12px;
 }
 
 @keyframes bubble1-h-movement {

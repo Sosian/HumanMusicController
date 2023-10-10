@@ -12,7 +12,9 @@
 
 <div class="row">
     <div class="column left">
-        <div class="bubble"></div>
+        <div id="bubbleSpawner">
+            @* <div class="bubble"></div> *@
+        </div>
         <div id="pulse" class="pulse"></div>
         <span
             style="color: var(--color-yellow); text-align: center; font-size: 55px; position: absolute; top: 28vh; left: 9vw; font-family: 'Brush Script MT';">@currentHeartbeat</span>
@@ -29,8 +31,6 @@
 
     <div class="column right">
         <div>
-            <div class="spark">
-            </div>
             <div
                 style="position: absolute; left: var(--progressbar-left-offset); height: @(progressbarHeight)px; top: var(--progressbar-top-offset); width: var(--progressbar-width); border-radius: 25px; border-style: solid; border-color: var(--color-yellow); background: linear-gradient(to top, var(--color-yellow) @progressToString%, var(--color-background) @progressToString%);">
             </div>
@@ -57,9 +57,9 @@
     int secondLevelProgressbar = 0;
 
     int progress = 0;
-    double averageHeartbeat = 70;
-    double minAverageHeartbeat = 70;
-    int maxAverageHeartbeat = 115;
+    double levelCounter = 70;
+    double minLevelCount = 0;
+    int maxLevelCount = 9600;
     string progressToString = "";
     string spannweiteToString = "";
     string averageHeartbeatToString = "";
@@ -82,14 +82,14 @@
 
 
         var soundMetronomeInterval = await JS.InvokeAsync<int>("setupSoundMetronome", "1000");
-        var wordsInterval = await JS.InvokeAsync<int>("setupWords", "1000", displayMessages);
+        var wordsInterval = await JS.InvokeAsync<int>("setupWords", "1000", displayMessages.First());
 
-        double spannweite = maxAverageHeartbeat - minAverageHeartbeat;
-        firstLevel = Convert.ToInt32((spannweite * 0.3) + minAverageHeartbeat);
-        secondLevel = Convert.ToInt32((spannweite * 0.6) + minAverageHeartbeat);
+        double spannweite = maxLevelCount - minLevelCount;
+        firstLevel = Convert.ToInt32((spannweite * 0.3) + minLevelCount);
+        secondLevel = Convert.ToInt32((spannweite * 0.6) + minLevelCount);
 
-        firstLevelPercentage = (int)(((firstLevel - minAverageHeartbeat) / spannweite) * 100);
-        secondLevelPercentage = (int)(((secondLevel - minAverageHeartbeat) / spannweite) * 100);
+        firstLevelPercentage = (int)(((firstLevel - minLevelCount) / spannweite) * 100);
+        secondLevelPercentage = (int)(((secondLevel - minLevelCount) / spannweite) * 100);
 
         firstLevelProgressbar = (int)(progressbarHeight - (progressbarHeight * ((double)firstLevelPercentage / 100)));
         secondLevelProgressbar = (int)(progressbarHeight - (progressbarHeight * ((double)secondLevelPercentage / 100)));
@@ -109,12 +109,10 @@
             }
 
 
-            spannweiteToString = spannweite.ToString();
+            levelCounter = (int)receivedHeartbeats.Sum();
+            averageHeartbeatToString = levelCounter.ToString();
 
-            averageHeartbeat = (int)receivedHeartbeats.Average();
-            averageHeartbeatToString = averageHeartbeat.ToString();
-
-            progress = (int)(((averageHeartbeat - minAverageHeartbeat) / spannweite) * 100);
+            progress = (int)(((levelCounter - minLevelCount) / spannweite) * 100);
 
             progressToString = progress.ToString();
 
