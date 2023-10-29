@@ -1,9 +1,7 @@
 function setDisplayBlockForPulse() {
-    document.getElementById('pulse').style.setProperty('display', 'none');
-    var millisecondsToWait = 10;
-    setTimeout(function () {
-        document.getElementById('pulse').style.setProperty('display', 'block');
-    }, millisecondsToWait);
+    var pulse = document.createElement("div");
+    pulse.className = "pulse";
+    document.getElementById('pulseSpawner').appendChild(pulse);
 
     var bubble = document.createElement("div");
     bubble.className = "bubble";
@@ -12,6 +10,7 @@ function setDisplayBlockForPulse() {
 
 function setupSoundMetronome(interval) {
 
+    console.log("setupSoundMetronome: " + interval);
     return setInterval(() => {
         document.getElementById('metronomeSoundPlayer').play();
 

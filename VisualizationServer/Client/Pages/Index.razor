@@ -14,7 +14,9 @@
         <div id="bubbleSpawner">
             @* <div class="bubble"></div> *@
         </div>
-        <div id="pulse" class="pulse"></div>
+        <div id="pulseSpawner">
+            @* <div class="pulse"></div> *@
+        </div>
         <span
             style="color: var(--color-yellow); text-align: center; font-size: 55px; position: absolute; top: 28vh; left: 9vw; font-family: 'Brush Script MT';">@currentHeartbeat</span>
     </div>
@@ -53,8 +55,7 @@
     double minLevelCount = 0;
     int maxLevelCount = 9600;
     string progressToString = "";
-    string spannweiteToString = "";
-    string averageHeartbeatToString = "";
+    string levelCounterToString = "";
 
     int firstLevel = 0;
     int secondLevel = 0;
@@ -85,10 +86,13 @@
         firstLevelProgressbar = (int)(progressbarHeight - (progressbarHeight * ((double)firstLevelPercentage / 100)));
         secondLevelProgressbar = (int)(progressbarHeight - (progressbarHeight * ((double)secondLevelPercentage / 100)));
 
+        Console.WriteLine($"Setup: FirstLevel: {firstLevelPercentage}, SecondLevel: {secondLevelPercentage}, MaxLevel: {maxLevelCount}");
+
         hubConnection.On<int>("ReceiveHeartbeat", (heartbeat) =>
         {
             receivedHeartbeats.Add(heartbeat);
             currentHeartbeat = $"{heartbeat}";
+            Console.WriteLine($"Received heartbeat: {heartbeat}");
 
             try
             {
@@ -101,15 +105,18 @@
 
 
             levelCounter = (int)receivedHeartbeats.Sum();
-            averageHeartbeatToString = levelCounter.ToString();
+            levelCounterToString = levelCounter.ToString();
 
             progress = (int)(((levelCounter - minLevelCount) / spannweite) * 100);
 
             progressToString = progress.ToString();
 
+            Console.WriteLine($"levelCounter: {levelCounter}, progress: {progress}");
+
             if (progress >= firstLevelPercentage && !firstLevelReached)
             {
                 firstLevelReached = true;
+                Console.WriteLine("firstLevelReached");
                 try
                 {
                     var temp2 = JS.InvokeAsync<int>("clearInterval", soundMetronomeInterval).Result;
@@ -124,6 +131,8 @@
             else if (progress >= secondLevelPercentage && !secondLevelReached)
             {
                 secondLevelReached = true;
+                Console.WriteLine("secondLevelReached");
+                
                 try
                 {
                     var _ = JS.InvokeAsync<int>("clearInterval", soundMetronomeInterval).Result;

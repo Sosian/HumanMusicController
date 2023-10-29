@@ -19,5 +19,4 @@ Color Palette:
 
 Possible Tasks:
 * Last Level: Background color switched to brightest Yellow, face changed to sunflower
-* Levels are broken again, fix them
-* Sometimes the heartbeat does not show up, not sure why
+* Sound snippets for level reaching
