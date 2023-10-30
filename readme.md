@@ -18,3 +18,4 @@ Color Palette:
 * Borrowed heartbeat animation from https://foolishdeveloper.com/css-heartbeat-animation/
 
 Possible Tasks:
+* The hearbeat in visualization is not in sync with normal hearbeat --> this is because of WASM there is only one thread --> Our Delay to wait for ubdating the progress is blocking. --> Probably need to put that into a background service or something like this
