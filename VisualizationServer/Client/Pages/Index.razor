@@ -6,9 +6,18 @@
 @inject ILogger<Index> Logger
 
 <audio id="metronomeSoundPlayer" src="MetronomeSound.wav">
-    Your browser does not support the html audio tag.
 </audio>
 
+<audio id="firstLevelBreakPlayer" src="firstLevelBreak.wav">
+</audio>
+
+
+<audio id="secondLevelBreakPlayer" src="secondLevelBreak.wav">
+</audio>
+      <div id="explodingProgressbarSpawner">
+        @* <div class="explodingProgressbar"></div> *@
+      </div>
+      
 <div class="row">
     <div class="column left">
         <div id="bubbleSpawner">
@@ -22,12 +31,12 @@
     </div>
     <div class="column middle">
         <img id="face" src="face.png"
-            style="top: 0; left: calc(var(--statue-left-offset) + 14vw); position: absolute;" />
+            style="top: 28vh; left: calc(var(--statue-left-offset) + 8vw); position: absolute;" />
     </div>
 
     <div class="column right">
         <div>
-            <div
+            <div id="progressbar"
                 style="position: absolute; left: var(--progressbar-left-offset); height: @(progressbarHeight)px; top: var(--progressbar-top-offset); width: var(--progressbar-width); border-radius: 25px; border-style: solid; border-color: var(--color-yellow); background: linear-gradient(to top, var(--color-yellow) @progressToString%, var(--color-background) @progressToString%);">
             </div>
 
@@ -53,9 +62,8 @@
     int progress = 0;
     double levelCounter = 70;
     double minLevelCount = 0;
-    int maxLevelCount = 9600;
+    int maxLevelCount = 6000;
     string progressToString = "";
-    string levelCounterToString = "";
 
     int firstLevel = 0;
     int secondLevel = 0;
@@ -66,6 +74,8 @@
     bool firstLevelReached = false;
     bool secondLevelReached = false;
 
+    bool finalLevelReached = false;
+
     List<int> receivedHeartbeats = new List<int>();
 
     protected override async Task OnInitializedAsync()
@@ -74,11 +84,11 @@
         .WithUrl(Navigation.ToAbsoluteUri("/heartbeatHub")).Build();
 
 
-        var soundMetronomeInterval = await JS.InvokeAsync<int>("setupSoundMetronome", "1000");
+        var soundMetronomeInterval = await JS.InvokeAsync<int>("setupSoundMetronome", "1500");
 
         double spannweite = maxLevelCount - minLevelCount;
         firstLevel = Convert.ToInt32((spannweite * 0.3) + minLevelCount);
-        secondLevel = Convert.ToInt32((spannweite * 0.6) + minLevelCount);
+        secondLevel = Convert.ToInt32((spannweite * 0.66) + minLevelCount);
 
         firstLevelPercentage = (int)(((firstLevel - minLevelCount) / spannweite) * 100);
         secondLevelPercentage = (int)(((secondLevel - minLevelCount) / spannweite) * 100);
@@ -88,64 +98,61 @@
 
         Console.WriteLine($"Setup: FirstLevel: {firstLevelPercentage}, SecondLevel: {secondLevelPercentage}, MaxLevel: {maxLevelCount}");
 
-        hubConnection.On<int>("ReceiveHeartbeat", (heartbeat) =>
+        hubConnection.On<int>("ReceiveHeartbeat", async (heartbeat) =>
         {
+            if (finalLevelReached)
+                return;
+
             receivedHeartbeats.Add(heartbeat);
             currentHeartbeat = $"{heartbeat}";
             Console.WriteLine($"Received heartbeat: {heartbeat}");
 
-            try
-            {
-                var temp1 = JS.InvokeAsync<int>("setDisplayBlockForPulse").Result;
-            }
-            catch (Exception)
-            {
-                //Not sure why this throws an exception, but everything works when i just catch it
-            }
+            await JS.InvokeVoidAsync("setDisplayBlockForPulse");
+
 
 
             levelCounter = (int)receivedHeartbeats.Sum();
-            levelCounterToString = levelCounter.ToString();
+            int progressbarDelayMilliseconds = 1950; //Sum of bubble animation delay and animation duration
 
-            progress = (int)(((levelCounter - minLevelCount) / spannweite) * 100);
-
-            progressToString = progress.ToString();
-
-            Console.WriteLine($"levelCounter: {levelCounter}, progress: {progress}");
-
-            if (progress >= firstLevelPercentage && !firstLevelReached)
-            {
-                firstLevelReached = true;
-                Console.WriteLine("firstLevelReached");
-                try
+            await Task.Delay(progressbarDelayMilliseconds).ContinueWith(async (o, levelCounterInsideLambda) => {
+                try {
+                    var intLevelCounter = Convert.ToInt32(levelCounterInsideLambda);
+                    progress = (int)(((intLevelCounter - minLevelCount) / spannweite) * 100);
+                    progressToString = progress.ToString();
+                } catch (Exception ex)
                 {
-                    var temp2 = JS.InvokeAsync<int>("clearInterval", soundMetronomeInterval).Result;
-                }
-                catch (Exception)
-                {
-                    //Not sure why this throws an exception, but everything works when i just catch it
+                    Console.WriteLine(ex);
                 }
 
-                soundMetronomeInterval = JS.InvokeAsync<int>("setupSoundMetronome", "500").Result;
-            }
-            else if (progress >= secondLevelPercentage && !secondLevelReached)
-            {
-                secondLevelReached = true;
-                Console.WriteLine("secondLevelReached");
-                
-                try
+                if (progress >= firstLevelPercentage && !firstLevelReached)
                 {
-                    var _ = JS.InvokeAsync<int>("clearInterval", soundMetronomeInterval).Result;
+                    firstLevelReached = true;
+                    Console.WriteLine("firstLevelReached");
+                    
+                    await JS.InvokeVoidAsync("clearInterval", soundMetronomeInterval);
+                    await JS.InvokeVoidAsync("playFirstLevelBreak");
+                    
+                    
+                    soundMetronomeInterval = await JS.InvokeAsync<int>("setupSoundMetronome", "1000");
+
                 }
-                catch (Exception)
+                else if (progress >= secondLevelPercentage && !secondLevelReached)
                 {
-                    //Not sure why this throws an exception, but it works when i just catch it
+                    secondLevelReached = true;
+                    Console.WriteLine("secondLevelReached");
+                    
+                    await JS.InvokeVoidAsync("clearInterval", soundMetronomeInterval);
+                    await JS.InvokeVoidAsync("playSecondLevelBreak");
+                    soundMetronomeInterval = await JS.InvokeAsync<int>("setupSoundMetronome", "500");
                 }
+                else if (progress >= 100)
+                {
+                    finalLevelReached = true;
 
-                soundMetronomeInterval = JS.InvokeAsync<int>("setupSoundMetronome", "250").Result;
-            }
-
-            StateHasChanged();
+                    await JS.InvokeVoidAsync("clearInterval", soundMetronomeInterval);
+                    await JS.InvokeVoidAsync("startExplosion");
+                }
+            }, levelCounter).ContinueWith(t => StateHasChanged());
         });
 
         await hubConnection.StartAsync();

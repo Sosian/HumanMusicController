@@ -18,5 +18,3 @@ Color Palette:
 * Borrowed heartbeat animation from https://foolishdeveloper.com/css-heartbeat-animation/
 
 Possible Tasks:
-* Last Level: Background color switched to brightest Yellow, face changed to sunflower
-* Sound snippets for level reaching

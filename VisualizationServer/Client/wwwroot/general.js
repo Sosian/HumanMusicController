@@ -8,6 +8,12 @@ function setDisplayBlockForPulse() {
     document.getElementById('bubbleSpawner').appendChild(bubble);
 }
 
+function startExplosion() {
+    var explodingProgressbar = document.createElement("div");
+    explodingProgressbar.className = "explodingProgressbar";
+    document.getElementById('explodingProgressbarSpawner').appendChild(explodingProgressbar);
+}
+
 function setupSoundMetronome(interval) {
 
     console.log("setupSoundMetronome: " + interval);
@@ -24,4 +30,12 @@ function setupSoundMetronome(interval) {
         }
         document.getElementById('face').style.setProperty('transform', rotateValue);
     }, interval);
+}
+
+function playFirstLevelBreak() {
+    document.getElementById('firstLevelBreakPlayer').play();
+}
+
+function playSecondLevelBreak() {
+    document.getElementById('secondLevelBreakPlayer').play();
 }
