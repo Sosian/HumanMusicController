@@ -18,12 +18,13 @@ namespace HumanMusicController
             using IHost host = Host.CreateDefaultBuilder(args).Build();
 
             var mode = args[0];
-            var bluetoothDeviceRequired = (mode == "Record" || mode == "Live");
+            var bluetoothDeviceRequired = mode == "Record" || mode == "Live";
 
             var midiSender = new MidiSender("loopMIDI Port");
             var midiConnector = new MidiConnector(midiSender);
             var recordConnecter = new RecordConnector(@"C:\Users\flori\Documents\DanceSensors\HumanMusicController\Records");
             var visualizationServerConnector = new VisualizationServerConnector("http://localhost:5253/heartbeatHub");
+            var midiVisualizationCompoundConnector = new CompoundConnector(new List<IConnector>() { midiConnector, visualizationServerConnector });
 
             if (bluetoothDeviceRequired)
             {
@@ -36,7 +37,7 @@ namespace HumanMusicController
                 if (mode == "Record")
                     polarH10Bluetooth = new PolarH10Bluetooth(host.Services.GetRequiredService<ILogger<PolarH10Bluetooth>>(), bluetoothDeviceSession, recordConnecter);
                 else if (mode == "Live")
-                    polarH10Bluetooth = new PolarH10Bluetooth(host.Services.GetRequiredService<ILogger<PolarH10Bluetooth>>(), bluetoothDeviceSession, midiConnector);
+                    polarH10Bluetooth = new PolarH10Bluetooth(host.Services.GetRequiredService<ILogger<PolarH10Bluetooth>>(), bluetoothDeviceSession, midiVisualizationCompoundConnector);
                 else
                     throw new Exception($"Argument '{args[0]}' not supported.");
 
@@ -44,7 +45,7 @@ namespace HumanMusicController
             }
             else if (mode == "Replay")
             {
-                var replayLogfile = new ReplayRecordfile(host.Services.GetRequiredService<ILogger<ReplayRecordfile>>(), new CompoundConnector(new List<IConnector>() { midiConnector, visualizationServerConnector }));
+                var replayLogfile = new ReplayRecordfile(host.Services.GetRequiredService<ILogger<ReplayRecordfile>>(), midiVisualizationCompoundConnector);
                 replayLogfile.Play(@"C:\Users\flori\Documents\DanceSensors\HumanMusicController\Records\20230611T1138");
             }
             else
