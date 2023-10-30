@@ -105,11 +105,9 @@
 
             receivedHeartbeats.Add(heartbeat);
             currentHeartbeat = $"{heartbeat}";
-            Console.WriteLine($"Received heartbeat: {heartbeat}");
+            Console.WriteLine($"{DateTime.Now}: Received heartbeat: {heartbeat}");
 
             await JS.InvokeVoidAsync("setDisplayBlockForPulse");
-
-
 
             levelCounter = (int)receivedHeartbeats.Sum();
             int progressbarDelayMilliseconds = 1950; //Sum of bubble animation delay and animation duration

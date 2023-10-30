@@ -10,6 +10,11 @@ namespace HumanMusicController
 {
     public class Program
     {
+        private const string midiPortName = "loopMIDI Port";
+        private const string recordsDirectory = @"C:\Users\flori\Documents\HumanMusicController\Records";
+        private const string visualizationServerUrl = "http://localhost:5253/heartbeatHub";
+        private const string recordFileFullPath = @$"{recordsDirectory}\20230611T1138";
+
         public static async Task Main(string[] args)
         {
             if (args.Count() == 0)
@@ -20,10 +25,10 @@ namespace HumanMusicController
             var mode = args[0];
             var bluetoothDeviceRequired = mode == "Record" || mode == "Live";
 
-            var midiSender = new MidiSender("loopMIDI Port");
+            var midiSender = new MidiSender(midiPortName);
             var midiConnector = new MidiConnector(midiSender);
-            var recordConnecter = new RecordConnector(@"C:\Users\flori\Documents\DanceSensors\HumanMusicController\Records");
-            var visualizationServerConnector = new VisualizationServerConnector("http://localhost:5253/heartbeatHub");
+            var recordConnecter = new RecordConnector(recordsDirectory);
+            var visualizationServerConnector = new VisualizationServerConnector(visualizationServerUrl);
             var midiVisualizationCompoundConnector = new CompoundConnector(new List<IConnector>() { midiConnector, visualizationServerConnector });
 
             if (bluetoothDeviceRequired)
@@ -46,7 +51,7 @@ namespace HumanMusicController
             else if (mode == "Replay")
             {
                 var replayLogfile = new ReplayRecordfile(host.Services.GetRequiredService<ILogger<ReplayRecordfile>>(), midiVisualizationCompoundConnector);
-                replayLogfile.Play(@"C:\Users\flori\Documents\DanceSensors\HumanMusicController\Records\20230611T1138");
+                replayLogfile.Play(recordFileFullPath);
             }
             else
             {
