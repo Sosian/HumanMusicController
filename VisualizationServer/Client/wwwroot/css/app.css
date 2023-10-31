@@ -216,7 +216,7 @@ body {
     z-index: 10;
     transition-duration: 1s;
     animation: progressbarExplosion 20s;
-    height: 200px;
+    height: 255px;
     width: 1px;
 }
 

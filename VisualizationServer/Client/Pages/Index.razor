@@ -112,7 +112,7 @@
             levelCounter = (int)receivedHeartbeats.Sum();
             int progressbarDelayMilliseconds = 1950; //Sum of bubble animation delay and animation duration
 
-            await Task.Delay(progressbarDelayMilliseconds).ContinueWith(async (o, levelCounterInsideLambda) => {
+            Task.Delay(progressbarDelayMilliseconds).ContinueWith(async (o, levelCounterInsideLambda) => {
                 try {
                     var intLevelCounter = Convert.ToInt32(levelCounterInsideLambda);
                     progress = (int)(((intLevelCounter - minLevelCount) / spannweite) * 100);
