@@ -98,7 +98,7 @@
 
         Console.WriteLine($"Setup: FirstLevel: {firstLevelPercentage}, SecondLevel: {secondLevelPercentage}, MaxLevel: {maxLevelCount}");
 
-        hubConnection.On<int>("ReceiveHeartbeat", async (heartbeat) =>
+        hubConnection.On<int>("ReceiveHeartbeat", async (heartbeat) =>   
         {
             if (finalLevelReached)
                 return;
@@ -118,7 +118,7 @@
                     progress = (int)(((intLevelCounter - minLevelCount) / spannweite) * 100);
                     progressToString = progress.ToString();
                 } catch (Exception ex)
-                {
+                 {
                     Console.WriteLine(ex);
                 }
 

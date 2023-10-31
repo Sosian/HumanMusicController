@@ -9,9 +9,16 @@ function setDisplayBlockForPulse() {
 }
 
 function startExplosion() {
-    var explodingProgressbar = document.createElement("div");
-    explodingProgressbar.className = "explodingProgressbar";
-    document.getElementById('explodingProgressbarSpawner').appendChild(explodingProgressbar);
+    var beforeExplodingProgressbar = document.createElement("div");
+    beforeExplodingProgressbar.className = "beforeExplodingProgressbar";
+    document.getElementById('explodingProgressbarSpawner').appendChild(beforeExplodingProgressbar);
+
+    setTimeout(
+        function(){
+            var explodingProgressbar = document.createElement("div");
+            explodingProgressbar.className = "explodingProgressbar";
+            document.getElementById('explodingProgressbarSpawner').appendChild(explodingProgressbar);
+        }, 4200)
 }
 
 function setupSoundMetronome(interval) {

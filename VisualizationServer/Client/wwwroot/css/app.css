@@ -203,6 +203,26 @@ body {
     }
 }
 
+.beforeExplodingProgressbar {
+    position: absolute;
+    left: var(--progressbar-left-offset);
+    height: 400px;
+    top: var(--progressbar-top-offset);
+    width: var(--progressbar-width);
+    border-radius: 25px;
+    border-style: solid;
+    z-index: 5;
+    background-color: var(--color-yellow);
+    animation: beforeProgressbarExplosion 5s;
+}
+
+@keyframes beforeProgressbarExplosion {
+    100% {
+        background-color: #C9C947;
+        left: calc(var(--progressbar-left-offset) - 1vw);
+        width: calc(var(--progressbar-width) + 1vw);
+    }
+}
 
 .explodingProgressbar {
     position: fixed;
