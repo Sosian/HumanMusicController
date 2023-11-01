@@ -22,7 +22,7 @@ namespace HumanMusicController
         {
             listOfHeartrates.Add(heartrate);
 
-            var key = heartrate - 40;
+            var key = heartrate - 50;
             if (lastPlayedNote == 0)
             {
                 outputDevice.SendEvent(new NoteOnEvent(new SevenBitNumber((byte)key), new SevenBitNumber((byte)key)));

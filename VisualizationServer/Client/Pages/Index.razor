@@ -103,6 +103,7 @@
 
             receivedHeartbeats.Add(heartbeat);
             currentHeartbeat = $"{heartbeat}";
+            StateHasChanged();
 
             await JS.InvokeVoidAsync("setDisplayBlockForPulse");
 
