@@ -28,8 +28,8 @@ namespace HumanMusicController
             var midiSender = new MidiSender(midiPortName);
             var midiConnector = new MidiConnector(midiSender);
             var recordConnecter = new RecordConnector(recordsDirectory);
-            var visualizationServerConnector = new VisualizationServerConnector(visualizationServerUrl);
-            var midiVisualizationCompoundConnector = new CompoundConnector(new List<IConnector>() { midiConnector, visualizationServerConnector });
+            var visualizationServerConnector = new VisualizationServerConnection(visualizationServerUrl);
+            var progressionConnector = new ProgressionConnector(midiSender, visualizationServerConnector);
 
             if (bluetoothDeviceRequired)
             {
@@ -42,7 +42,7 @@ namespace HumanMusicController
                 if (mode == "Record")
                     polarH10Bluetooth = new PolarH10Bluetooth(host.Services.GetRequiredService<ILogger<PolarH10Bluetooth>>(), bluetoothDeviceSession, recordConnecter);
                 else if (mode == "Live")
-                    polarH10Bluetooth = new PolarH10Bluetooth(host.Services.GetRequiredService<ILogger<PolarH10Bluetooth>>(), bluetoothDeviceSession, midiVisualizationCompoundConnector);
+                    polarH10Bluetooth = new PolarH10Bluetooth(host.Services.GetRequiredService<ILogger<PolarH10Bluetooth>>(), bluetoothDeviceSession, progressionConnector);
                 else
                     throw new Exception($"Argument '{args[0]}' not supported.");
 
@@ -50,7 +50,7 @@ namespace HumanMusicController
             }
             else if (mode == "Replay")
             {
-                var replayLogfile = new ReplayRecordfile(host.Services.GetRequiredService<ILogger<ReplayRecordfile>>(), midiVisualizationCompoundConnector);
+                var replayLogfile = new ReplayRecordfile(host.Services.GetRequiredService<ILogger<ReplayRecordfile>>(), progressionConnector);
                 replayLogfile.Play(recordFileFullPath);
             }
             else

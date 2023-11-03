@@ -70,11 +70,11 @@
     int firstLevelPercentage = 0;
     int secondLevelPercentage = 0;
 
-    bool firstLevelReached = false;
-    bool secondLevelReached = false;
+    int currentLevel = 0;
 
-    bool finalLevelReached = false;
-
+    bool firstLevelTriggered = false;
+    bool secondLevelTriggered = false;
+    
     List<int> receivedHeartbeats = new List<int>();
 
     protected override async Task OnInitializedAsync()
@@ -96,11 +96,13 @@
 
         Console.WriteLine($"Setup: FirstLevel: {firstLevelPercentage}, SecondLevel: {secondLevelPercentage}, MaxLevel: {maxLevelCount}");
 
-        hubConnection.On<int>("ReceiveHeartbeat", async (heartbeat) =>   
+        hubConnection.On<int>("LevelReached", async (level) =>
         {
-            if (finalLevelReached)
-                return;
+            currentLevel = level;
+        });
 
+        hubConnection.On<int>("ReceiveHeartbeat", async (heartbeat, currentProgress) =>   
+        {
             receivedHeartbeats.Add(heartbeat);
             currentHeartbeat = $"{heartbeat}";
             StateHasChanged();
@@ -111,49 +113,51 @@
             int progressbarDelayMilliseconds = 1950; //Sum of bubble animation delay and animation duration
             
             #pragma warning disable CS4014 
-            Task.Delay(progressbarDelayMilliseconds).ContinueWith(async (o, levelCounterInsideLambda) => {
+            Task.Delay(progressbarDelayMilliseconds).ContinueWith(async (o) => {
             #pragma warning restore CS4014 
                 try {
-                    var intLevelCounter = Convert.ToInt32(levelCounterInsideLambda);
-                    progress = (int)(((intLevelCounter - minLevelCount) / spannweite) * 100);
+                    progress = (int)(currentProgress * 100);
                     progressToString = progress.ToString();
+                    TriggerCurrentLevel();
                 } catch (Exception ex)
                  {
                     Console.WriteLine(ex);
                 }
-
-                if (progress >= firstLevelPercentage && !firstLevelReached)
-                {
-                    firstLevelReached = true;
-                    Console.WriteLine("firstLevelReached");
-                    
-                    await JS.InvokeVoidAsync("clearInterval", soundMetronomeInterval);
-                    await JS.InvokeVoidAsync("playFirstLevelBreak");
-                    
-                    
-                    soundMetronomeInterval = await JS.InvokeAsync<int>("setupSoundMetronome", "1000");
-
-                }
-                else if (progress >= secondLevelPercentage && !secondLevelReached)
-                {
-                    secondLevelReached = true;
-                    Console.WriteLine("secondLevelReached");
-                    
-                    await JS.InvokeVoidAsync("clearInterval", soundMetronomeInterval);
-                    await JS.InvokeVoidAsync("playSecondLevelBreak");
-                    soundMetronomeInterval = await JS.InvokeAsync<int>("setupSoundMetronome", "500");
-                }
-                else if (progress >= 100)
-                {
-                    finalLevelReached = true;
-
-                    await JS.InvokeVoidAsync("clearInterval", soundMetronomeInterval);
-                    await JS.InvokeVoidAsync("startExplosion");
-                }
-            }, levelCounter).ContinueWith(t => StateHasChanged());
+            }).ContinueWith(t => StateHasChanged());
         });
 
         await hubConnection.StartAsync();
+    }
+
+    private void TriggerCurrentLevel ()
+    {
+        if (currentLevel == 1 && !firstLevelTriggered)
+        {
+            firstLevelTriggered = true;
+            Console.WriteLine("firstLevelReached");
+            
+            await JS.InvokeVoidAsync("clearInterval", soundMetronomeInterval);
+            await JS.InvokeVoidAsync("playFirstLevelBreak");
+            
+            
+            soundMetronomeInterval = await JS.InvokeAsync<int>("setupSoundMetronome", "1000");
+        }
+        else if (currentLevel == 2 && !secondLevelTriggered)
+        {
+            secondLevelTriggered = true;
+            Console.WriteLine("secondLevelReached");
+            
+            await JS.InvokeVoidAsync("clearInterval", soundMetronomeInterval);
+            await JS.InvokeVoidAsync("playSecondLevelBreak");
+            soundMetronomeInterval = await JS.InvokeAsync<int>("setupSoundMetronome", "500");
+        }
+        else if (currentLevel == 3)
+        {
+            Console.WriteLine("finaleReached");
+
+            await JS.InvokeVoidAsync("clearInterval", soundMetronomeInterval);
+            await JS.InvokeVoidAsync("startExplosion");
+        }
     }
 
     public bool IsConnected => hubConnection?.State == HubConnectionState.Connected;

@@ -5,9 +5,14 @@ namespace VisualizationServer.Server.Hubs
 {
     public class HeartbeatHub : Hub
     {
-        public async Task SendHeartbeat(int heartbeat)
+        public async Task SendHeartbeat(int heartbeat, double currentProgress)
         {
-            await Clients.All.SendAsync("ReceiveHeartbeat", heartbeat);
+            await Clients.All.SendAsync("ReceiveHeartbeat", heartbeat, currentProgress);
+        }
+
+        public async Task LevelReached(int level)
+        {
+            await Clients.All.SendAsync("LevelReached", level);
         }
     }
 }

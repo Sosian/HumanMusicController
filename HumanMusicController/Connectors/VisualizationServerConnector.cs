@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.SignalR.Client;
 
 namespace HumanMusicController.Connectors
 {
-    public class VisualizationServerConnector : IConnector
+    public class VisualizationServerConnection
     {
         private readonly HubConnection connection;
 
-        public VisualizationServerConnector(string url)
+        public VisualizationServerConnection(string url)
         {
             connection = new HubConnectionBuilder()
                 .WithUrl(new Uri(url))
@@ -16,9 +16,14 @@ namespace HumanMusicController.Connectors
             connection.StartAsync().GetAwaiter().GetResult();
         }
 
-        public async void ReceiveData(HrPayload hrPayload)
+        public async void SendHeartrateToVisualizationServer(int heartrate, double currentProgress)
         {
-            await connection.SendAsync("SendHeartbeat", hrPayload.Heartrate);
+            await connection.SendAsync("SendHeartbeat", heartrate, currentProgress);
+        }
+
+        public async void SendLevelToVisualizationServer(int level)
+        {
+            await connection.SendAsync("LevelReached", level);
         }
     }
 }

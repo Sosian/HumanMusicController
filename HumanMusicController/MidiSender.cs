@@ -9,7 +9,6 @@ namespace HumanMusicController
     {
         private readonly OutputDevice outputDevice;
 
-        private List<int> listOfHeartrates = new List<int>();
 
         private int lastPlayedNote = 0;
 
@@ -18,27 +17,20 @@ namespace HumanMusicController
             outputDevice = OutputDevice.GetByName(midiPortName);
         }
 
-        public void SendMidiMsg(int heartrate)
+        public void SendMidiMsg(int key)
         {
-            listOfHeartrates.Add(heartrate);
-
-            var key = heartrate - 50;
+            //To make the note played relate more to the music, hold it until the next one arrives
             if (lastPlayedNote == 0)
             {
                 outputDevice.SendEvent(new NoteOnEvent(new SevenBitNumber((byte)key), new SevenBitNumber((byte)key)));
                 lastPlayedNote = key;
             }
-            else if (LastXItemsAreNotTheSame(listOfHeartrates, 5))
+            else
             {
                 outputDevice.SendEvent(new NoteOffEvent(new SevenBitNumber((byte)lastPlayedNote), new SevenBitNumber((byte)lastPlayedNote)));
                 lastPlayedNote = key;
                 outputDevice.SendEvent(new NoteOnEvent(new SevenBitNumber((byte)key), new SevenBitNumber((byte)key)));
             }
-        }
-
-        private bool LastXItemsAreNotTheSame(IEnumerable<int> listOfItems, int numberOfItems)
-        {
-            return listOfItems.Reverse().Take(numberOfItems).Distinct().Count() != 1;
         }
 
         public void Dispose()
