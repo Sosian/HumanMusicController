@@ -16,14 +16,9 @@ namespace HumanMusicController.Connectors
             connection.StartAsync().GetAwaiter().GetResult();
         }
 
-        public async void SendHeartrateToVisualizationServer(int heartrate, double currentProgress)
+        public async void SendHeartrateToVisualizationServer(int heartrate, double currentProgress, int currentLevel)
         {
-            await connection.SendAsync("SendHeartbeat", heartrate, currentProgress);
-        }
-
-        public async void SendLevelToVisualizationServer(int level)
-        {
-            await connection.SendAsync("LevelReached", level);
+            await connection.SendAsync("SendHeartbeat", heartrate, currentProgress, currentLevel);
         }
     }
 }

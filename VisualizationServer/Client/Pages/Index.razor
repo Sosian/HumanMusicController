@@ -59,7 +59,6 @@
     int secondLevelProgressbar = 0;
 
     int progress = 0;
-    double levelCounter = 70;
     double minLevelCount = 0;
     int maxLevelCount = 6000;
     string progressToString = "";
@@ -69,20 +68,17 @@
 
     int firstLevelPercentage = 0;
     int secondLevelPercentage = 0;
-
-    int currentLevel = 0;
-
     bool firstLevelTriggered = false;
     bool secondLevelTriggered = false;
-    
-    List<int> receivedHeartbeats = new List<int>();
+
+    int soundMetronomeInterval;
 
     protected override async Task OnInitializedAsync()
     {
         hubConnection = new HubConnectionBuilder()
         .WithUrl(Navigation.ToAbsoluteUri("/heartbeatHub")).Build();
 
-        var soundMetronomeInterval = await JS.InvokeAsync<int>("setupSoundMetronome", "1500");
+        soundMetronomeInterval = await JS.InvokeAsync<int>("setupSoundMetronome", "1500");
 
         double spannweite = maxLevelCount - minLevelCount;
         firstLevel = Convert.ToInt32((spannweite * 0.3) + minLevelCount);
@@ -96,29 +92,24 @@
 
         Console.WriteLine($"Setup: FirstLevel: {firstLevelPercentage}, SecondLevel: {secondLevelPercentage}, MaxLevel: {maxLevelCount}");
 
-        hubConnection.On<int>("LevelReached", async (level) =>
+        hubConnection.On<int, double, int>("ReceiveHeartbeat", async (heartbeat, currentProgress, currentLevel) =>   
         {
-            currentLevel = level;
-        });
-
-        hubConnection.On<int>("ReceiveHeartbeat", async (heartbeat, currentProgress) =>   
-        {
-            receivedHeartbeats.Add(heartbeat);
+            Console.WriteLine($"Received hearbeat '{heartbeat}' and Progress '{currentProgress}'");
             currentHeartbeat = $"{heartbeat}";
             StateHasChanged();
 
             await JS.InvokeVoidAsync("setDisplayBlockForPulse");
 
-            levelCounter = (int)receivedHeartbeats.Sum();
             int progressbarDelayMilliseconds = 1950; //Sum of bubble animation delay and animation duration
             
             #pragma warning disable CS4014 
             Task.Delay(progressbarDelayMilliseconds).ContinueWith(async (o) => {
             #pragma warning restore CS4014 
-                try {
+                try 
+                {
                     progress = (int)(currentProgress * 100);
                     progressToString = progress.ToString();
-                    TriggerCurrentLevel();
+                    await TriggerCurrentLevel(currentLevel);
                 } catch (Exception ex)
                  {
                     Console.WriteLine(ex);
@@ -129,7 +120,7 @@
         await hubConnection.StartAsync();
     }
 
-    private void TriggerCurrentLevel ()
+    private async Task TriggerCurrentLevel (int currentLevel)
     {
         if (currentLevel == 1 && !firstLevelTriggered)
         {
@@ -155,6 +146,7 @@
         {
             Console.WriteLine("finaleReached");
 
+            currentHeartbeat = "...";
             await JS.InvokeVoidAsync("clearInterval", soundMetronomeInterval);
             await JS.InvokeVoidAsync("startExplosion");
         }

@@ -219,8 +219,9 @@ body {
 @keyframes beforeProgressbarExplosion {
     100% {
         background-color: #C9C947;
-        left: calc(var(--progressbar-left-offset) - 1vw);
-        width: calc(var(--progressbar-width) + 1vw);
+        left: calc(var(--progressbar-left-offset) - 3vw);
+        width: calc(var(--progressbar-width) + 5vw);
+        height: 450px;
     }
 }
 
@@ -233,6 +234,7 @@ body {
     margin: 10px;
     border: 0;
     background-color: #C9C947;
+    border-color: #C9C947;
     z-index: 10;
     transition-duration: 1s;
     animation: progressbarExplosion 20s;

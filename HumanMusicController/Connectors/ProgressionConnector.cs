@@ -12,7 +12,7 @@ namespace HumanMusicController.Connectors
         //The numbers for the levels are shared context between Connector and VisualizationServer
         private double firstLevel = 0.3;
         private double secondLevel = 0.66;
-        
+
         private int currentLevel = 0;
 
         private List<int> listOfHeartrates = new List<int>();
@@ -25,33 +25,34 @@ namespace HumanMusicController.Connectors
 
         public void ReceiveData(HrPayload hrPayload)
         {
+            //Final level reached, so stop sending anything
+            if (currentLevel == 3)
+                return;
+
             var heartrate = hrPayload.Heartrate;
             listOfHeartrates.Add(heartrate);
-            
+
             //To make the notes start lower than the heartrate
             var key = heartrate - 50;
             midiSender.SendMidiMsg(key);
 
             var sumOfHeartrates = listOfHeartrates.Sum();
-            var currentProgress = sumOfHeartrates / maxHeartrateSum;
+            double currentProgress = (double)sumOfHeartrates / maxHeartrateSum;
 
-            if (currentLevel == 0 && currentProgress >= maxHeartrateSum*firstLevel)
+            if (currentLevel == 0 && sumOfHeartrates >= maxHeartrateSum * firstLevel)
             {
                 currentLevel = 1;
-                visualizationServerConnection.SendLevelToVisualizationServer(currentLevel);
             }
-            else if (currentLevel == 1 && currentProgress >= maxHeartrateSum*secondLevel)
+            else if (currentLevel == 1 && sumOfHeartrates >= maxHeartrateSum * secondLevel)
             {
                 currentLevel = 2;
-                visualizationServerConnection.SendLevelToVisualizationServer(currentLevel);    
             }
             else if (currentLevel == 2 && sumOfHeartrates >= maxHeartrateSum)
             {
                 currentLevel = 3;
-                visualizationServerConnection.SendLevelToVisualizationServer(currentLevel);       
             }
 
-            visualizationServerConnection.SendHeartrateToVisualizationServer(heartrate, currentProgress);
+            visualizationServerConnection.SendHeartrateToVisualizationServer(heartrate, currentProgress, currentLevel);
         }
     }
 }
