@@ -237,7 +237,7 @@ body {
     border-color: #C9C947;
     z-index: 10;
     transition-duration: 1s;
-    animation: progressbarExplosion 20s;
+    animation: progressbarExplosion 30s forwards;
     height: 255px;
     width: 1px;
 }

@@ -14,7 +14,7 @@ function startExplosion() {
     document.getElementById('explodingProgressbarSpawner').appendChild(beforeExplodingProgressbar);
 
     setTimeout(
-        function(){
+        function () {
             var explodingProgressbar = document.createElement("div");
             explodingProgressbar.className = "explodingProgressbar";
             document.getElementById('explodingProgressbarSpawner').appendChild(explodingProgressbar);
@@ -45,4 +45,8 @@ function playFirstLevelBreak() {
 
 function playSecondLevelBreak() {
     document.getElementById('secondLevelBreakPlayer').play();
+}
+
+function playThirdLevelBreak() {
+    document.getElementById('thirdLevelBreakPlayer').play();
 }

@@ -13,9 +13,13 @@
 
 <audio id="secondLevelBreakPlayer" src="secondLevelBreak.wav">
 </audio>
-      <div id="explodingProgressbarSpawner">
-        @* <div class="explodingProgressbar"></div> *@
-      </div>
+
+<audio id="thirdLevelBreakPlayer" src="thirdLevelBreak.wav">
+</audio>
+
+<div id="explodingProgressbarSpawner">
+@* <div class="explodingProgressbar"></div> *@
+</div>
       
 <div class="row">
     <div class="column left">
@@ -147,6 +151,7 @@
             Console.WriteLine("finaleReached");
 
             currentHeartbeat = "...";
+            await JS.InvokeVoidAsync("playThirdLevelBreak");
             await JS.InvokeVoidAsync("clearInterval", soundMetronomeInterval);
             await JS.InvokeVoidAsync("startExplosion");
         }

@@ -33,6 +33,11 @@ namespace HumanMusicController
             }
         }
 
+        public void NoteOffEventForLastPlayedNote()
+        {
+            outputDevice.SendEvent(new NoteOffEvent(new SevenBitNumber((byte)lastPlayedNote), new SevenBitNumber((byte)lastPlayedNote)));
+        }
+
         public void Dispose()
         {
             outputDevice.Dispose();

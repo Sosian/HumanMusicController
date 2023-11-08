@@ -18,3 +18,9 @@ Color Palette:
 * Borrowed heartbeat animation from https://foolishdeveloper.com/css-heartbeat-animation/
 
 Possible Tasks:
+
+Checklist:
+* Windows Energy Settings
+** Monitor does not turn of for at least an hour
+** Same for going to sleep
+* Click in the screen for the visualization sound
