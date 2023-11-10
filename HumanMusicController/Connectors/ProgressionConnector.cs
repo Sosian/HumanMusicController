@@ -11,7 +11,7 @@ namespace HumanMusicController.Connectors
 
         //The numbers for the levels are shared context between Connector and VisualizationServer
         private double firstLevel = 0.3;
-        private double secondLevel = 0.66;
+        private double secondLevel = 0.75;
         private int currentLevel = 0;
 
         private List<int> listOfHeartrates = new List<int>();

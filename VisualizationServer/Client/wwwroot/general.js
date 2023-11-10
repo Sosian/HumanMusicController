@@ -1,10 +1,15 @@
-function setDisplayBlockForPulse() {
+function setDisplayBlockForPulse(heartbeat) {
     var pulse = document.createElement("div");
     pulse.className = "pulse";
     document.getElementById('pulseSpawner').appendChild(pulse);
 
+    var bubbleSize = Math.round(heartbeat / 10);
     var bubble = document.createElement("div");
+
     bubble.className = "bubble";
+    bubble.style.width = bubbleSize + "px";
+    bubble.style.height = bubbleSize + "px";
+
     document.getElementById('bubbleSpawner').appendChild(bubble);
 }
 

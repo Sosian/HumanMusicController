@@ -117,8 +117,6 @@ body {
 
 .bubble {
     position: absolute;
-    width: 7px;
-    height: 7px;
     top: var(--bubbles-top-offset);
     left: 16vw;
     border-radius: 50%;

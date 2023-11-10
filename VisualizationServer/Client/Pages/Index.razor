@@ -30,7 +30,7 @@
             @* <div class="pulse"></div> *@
         </div>
         <span
-            style="color: var(--color-yellow); text-align: center; font-size: 55px; position: absolute; top: 28vh; left: 9vw; font-family: 'Brush Script MT';">@currentHeartbeat</span>
+            style="color: var(--color-yellow); text-align: center; font-size: 115px; position: absolute; top: 24vh; left: 8vw; font-family: 'Brush Script MT';">@currentHeartbeat</span>
     </div>
     <div class="column middle">
         <img id="face" src="face.png"
@@ -86,7 +86,7 @@
 
         double spannweite = maxLevelCount - minLevelCount;
         firstLevel = Convert.ToInt32((spannweite * 0.3) + minLevelCount);
-        secondLevel = Convert.ToInt32((spannweite * 0.66) + minLevelCount);
+        secondLevel = Convert.ToInt32((spannweite * 0.75) + minLevelCount);
 
         firstLevelPercentage = (int)(((firstLevel - minLevelCount) / spannweite) * 100);
         secondLevelPercentage = (int)(((secondLevel - minLevelCount) / spannweite) * 100);
@@ -102,7 +102,7 @@
             currentHeartbeat = $"{heartbeat}";
             StateHasChanged();
 
-            await JS.InvokeVoidAsync("setDisplayBlockForPulse");
+            await JS.InvokeVoidAsync("setDisplayBlockForPulse", heartbeat);
 
             int progressbarDelayMilliseconds = 1950; //Sum of bubble animation delay and animation duration
             
