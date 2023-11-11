@@ -44,6 +44,10 @@ function setupSoundMetronome(interval) {
     }, interval);
 }
 
+function setSoundMetronomeVolume(volume) {
+    document.getElementById('metronomeSoundPlayer').volume = volume;
+}
+
 function playFirstLevelBreak() {
     document.getElementById('firstLevelBreakPlayer').play();
 }

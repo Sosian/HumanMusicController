@@ -14,13 +14,10 @@
 <audio id="secondLevelBreakPlayer" src="secondLevelBreak.wav">
 </audio>
 
-<audio id="thirdLevelBreakPlayer" src="thirdLevelBreak.wav">
-</audio>
-
 <div id="explodingProgressbarSpawner">
-@* <div class="explodingProgressbar"></div> *@
+    @* <div class="explodingProgressbar"></div> *@
 </div>
-      
+
 <div class="row">
     <div class="column left">
         <div id="bubbleSpawner">
@@ -30,7 +27,7 @@
             @* <div class="pulse"></div> *@
         </div>
         <span
-            style="color: var(--color-yellow); text-align: center; font-size: 115px; position: absolute; top: 24vh; left: 8vw; font-family: 'Brush Script MT';">@currentHeartbeat</span>
+            style="color: var(--color-yellow); text-align: center; font-size: 125px; position: absolute; top: 24vh; left: 8vw; font-family: 'Brush Script MT';">@currentHeartbeat</span>
     </div>
     <div class="column middle">
         <img id="face" src="face.png"
@@ -62,7 +59,7 @@
     int firstLevelProgressbar = 0;
     int secondLevelProgressbar = 0;
 
-    int progress = 0;
+    double progress = 0;
     double minLevelCount = 0;
     int maxLevelCount = 6000;
     string progressToString = "";
@@ -77,12 +74,13 @@
 
     int soundMetronomeInterval;
 
+    bool firstHearbeat = false;
+
     protected override async Task OnInitializedAsync()
     {
         hubConnection = new HubConnectionBuilder()
         .WithUrl(Navigation.ToAbsoluteUri("/heartbeatHub")).Build();
 
-        soundMetronomeInterval = await JS.InvokeAsync<int>("setupSoundMetronome", "1500");
 
         double spannweite = maxLevelCount - minLevelCount;
         firstLevel = Convert.ToInt32((spannweite * 0.3) + minLevelCount);
@@ -96,26 +94,42 @@
 
         Console.WriteLine($"Setup: FirstLevel: {firstLevelPercentage}, SecondLevel: {secondLevelPercentage}, MaxLevel: {maxLevelCount}");
 
-        hubConnection.On<int, double, int>("ReceiveHeartbeat", async (heartbeat, currentProgress, currentLevel) =>   
+        hubConnection.On<int, double, int>("ReceiveHeartbeat", async (heartbeat, currentProgress, currentLevel) =>
         {
-            Console.WriteLine($"Received hearbeat '{heartbeat}' and Progress '{currentProgress}'");
-            currentHeartbeat = $"{heartbeat}";
-            StateHasChanged();
+            if (!firstHearbeat)
+            {
+                soundMetronomeInterval = await JS.InvokeAsync<int>("setupSoundMetronome", "1500");
+                await JS.InvokeVoidAsync("setSoundMetronomeVolume", "0.8");
+                firstHearbeat = true;
+            }
 
-            await JS.InvokeVoidAsync("setDisplayBlockForPulse", heartbeat);
+            if (heartbeat != 999)
+            {
+                Console.WriteLine($"Received hearbeat '{heartbeat}' and Progress '{currentProgress}' and Level '{currentLevel}'");
+                currentHeartbeat = $"{heartbeat}";
+                StateHasChanged();
 
-            int progressbarDelayMilliseconds = 1950; //Sum of bubble animation delay and animation duration
+                await JS.InvokeVoidAsync("setDisplayBlockForPulse", heartbeat);
+            }
             
-            #pragma warning disable CS4014 
-            Task.Delay(progressbarDelayMilliseconds).ContinueWith(async (o) => {
-            #pragma warning restore CS4014 
-                try 
+            int progressbarDelayMilliseconds = 1950; //Sum of bubble animation delay and animation duration
+
+#pragma warning disable CS4014
+            Task.Delay(progressbarDelayMilliseconds).ContinueWith(async (o) =>
+            {
+#pragma warning restore CS4014
+                try
                 {
-                    progress = (int)(currentProgress * 100);
-                    progressToString = progress.ToString();
+                    if (heartbeat != 999)
+                    {
+                        progress = (currentProgress * 100);
+                        progressToString = progress.ToString().Replace(',', '.');
+                    }
+                    
                     await TriggerCurrentLevel(currentLevel);
-                } catch (Exception ex)
-                 {
+                }
+                catch (Exception ex)
+                {
                     Console.WriteLine(ex);
                 }
             }).ContinueWith(t => StateHasChanged());
@@ -124,24 +138,24 @@
         await hubConnection.StartAsync();
     }
 
-    private async Task TriggerCurrentLevel (int currentLevel)
+    private async Task TriggerCurrentLevel(int currentLevel)
     {
         if (currentLevel == 1 && !firstLevelTriggered)
         {
             firstLevelTriggered = true;
             Console.WriteLine("firstLevelReached");
-            
+
             await JS.InvokeVoidAsync("clearInterval", soundMetronomeInterval);
             await JS.InvokeVoidAsync("playFirstLevelBreak");
-            
-            
+
+
             soundMetronomeInterval = await JS.InvokeAsync<int>("setupSoundMetronome", "1000");
         }
         else if (currentLevel == 2 && !secondLevelTriggered)
         {
             secondLevelTriggered = true;
             Console.WriteLine("secondLevelReached");
-            
+
             await JS.InvokeVoidAsync("clearInterval", soundMetronomeInterval);
             await JS.InvokeVoidAsync("playSecondLevelBreak");
             soundMetronomeInterval = await JS.InvokeAsync<int>("setupSoundMetronome", "500");
@@ -151,7 +165,6 @@
             Console.WriteLine("finaleReached");
 
             currentHeartbeat = "...";
-            await JS.InvokeVoidAsync("playThirdLevelBreak");
             await JS.InvokeVoidAsync("clearInterval", soundMetronomeInterval);
             await JS.InvokeVoidAsync("startExplosion");
         }
