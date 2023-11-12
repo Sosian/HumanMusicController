@@ -27,9 +27,10 @@ namespace HumanMusicController
 
             var midiSender = new MidiSender(midiPortName);
             var midiConnector = new MidiConnector(midiSender);
-            var recordConnecter = new RecordConnector(recordsDirectory);
+            var recordConnector = new RecordConnector(recordsDirectory);
             var visualizationServerConnector = new VisualizationServerConnection(visualizationServerUrl);
             var progressionConnector = new ProgressionConnector(midiSender, visualizationServerConnector);
+            var compoundConnector = new CompoundConnector(new List<IConnector>() { progressionConnector, recordConnector });
 
             if (bluetoothDeviceRequired)
             {
@@ -40,9 +41,9 @@ namespace HumanMusicController
                 PolarH10Bluetooth polarH10Bluetooth;
 
                 if (mode == "Record")
-                    polarH10Bluetooth = new PolarH10Bluetooth(host.Services.GetRequiredService<ILogger<PolarH10Bluetooth>>(), bluetoothDeviceSession, recordConnecter);
+                    polarH10Bluetooth = new PolarH10Bluetooth(host.Services.GetRequiredService<ILogger<PolarH10Bluetooth>>(), bluetoothDeviceSession, recordConnector);
                 else if (mode == "Live")
-                    polarH10Bluetooth = new PolarH10Bluetooth(host.Services.GetRequiredService<ILogger<PolarH10Bluetooth>>(), bluetoothDeviceSession, progressionConnector);
+                    polarH10Bluetooth = new PolarH10Bluetooth(host.Services.GetRequiredService<ILogger<PolarH10Bluetooth>>(), bluetoothDeviceSession, compoundConnector);
                 else
                     throw new Exception($"Argument '{args[0]}' not supported.");
 
