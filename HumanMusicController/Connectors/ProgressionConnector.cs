@@ -8,7 +8,7 @@ namespace HumanMusicController.Connectors
         private readonly MidiSender midiSender;
         private readonly VisualizationServerConnection visualizationServerConnection;
 
-        private static int maxHeartrateSum = 35000;
+        private static int maxHeartrateSum = 32500;
 
         //The numbers for the levels are shared context between Connector and VisualizationServer
         private double firstLevel = 0.3;
@@ -56,7 +56,7 @@ namespace HumanMusicController.Connectors
             else if (currentLevel == 2 && sumOfHeartrates >= maxHeartrateSum)
             {
                 currentLevel = 3;
-                Task.Delay(20000).ContinueWith((_) => midiSender.NoteOffEventForLastPlayedNote());
+                Task.Delay(25000).ContinueWith((_) => midiSender.NoteOffEventForLastPlayedNote());
                 soundPlayer.Play();
                 Task.Delay(1000).ContinueWith((_) => midiSender.SendMidiMsg(30));
 
@@ -64,7 +64,7 @@ namespace HumanMusicController.Connectors
             }
 
             //To make the notes start lower than the heartrate
-            var key = heartrate - 50;
+            var key = heartrate - 65;
             midiSender.SendMidiMsg(key);
             visualizationServerConnection.SendHeartrateToVisualizationServer(heartrate, currentProgress, currentLevel);
         }
