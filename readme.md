@@ -15,7 +15,12 @@ Color Palette:
 #DDCF28 -- bright yellow
 #C9C947 --brighter yellow
 
-* Borrowed heartbeat animation from https://foolishdeveloper.com/css-heartbeat-animation/
+* Borrowed heartbeat animation from https://codepen.io/vsync/pen/QwbZjE by Yair Even Or
+
+
+* For Arduino:
+* * Started with tutorial here: https://dronebotworkshop.com/arduino-nano-33-iot/
+* * arduino-cli compile Arduino.ino -b arduino:samd:nano_33_iot -p COM3
 
 Possible Tasks:
 
