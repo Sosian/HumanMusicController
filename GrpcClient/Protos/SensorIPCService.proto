@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcClient";
+
+service SensorIPCService {
+  rpc SendIMUData (IMUDataMessage) returns (Empty);
+}
+
+message IMUDataMessage {
+  string name = 1;
+  float x = 2;
+  float y = 3;
+  float z = 4;
+  float gx = 5;
+  float gy = 6;
+  float gz = 7;
+}
+
+message Empty {
+}
