@@ -1,0 +1,7 @@
+live_loop :foo do
+  use_real_time
+  use_synth :fm
+  a, b = sync "/osc*/trigger/prophet"
+  play 50, amp: a, attack: b
+  sleep 0.3
+end

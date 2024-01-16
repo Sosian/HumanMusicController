@@ -1,6 +1,6 @@
+using System.Globalization;
 using Grpc.Net.Client;
 using GrpcClient;
-using GrpcClient.Recorder;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SensorReceiverServer.Controllers;
@@ -9,28 +9,15 @@ namespace SensorReceiverServer.Controllers;
 public class IMUController : ControllerBase
 {
     private readonly ILogger<IMUController> _logger;
-    private GrpcChannel grpcChannel;
+    private GrpcChannel _grpcChannel;
 
-    private Recorder<IMUDataMessage> _recorder;
+    private IRecorder<IMUDataMessage> _recorder;
 
-    public IMUController(ILogger<IMUController> logger)
+    public IMUController(ILogger<IMUController> logger, IRecorder<IMUDataMessage> recorder, GrpcChannel grpcChannel)
     {
         _logger = logger;
-
-        //TODO: This should probably be a singleton supplied by DependencyInjection
-        var connectionFactory = new NamedPipesConnectionFactory("MyPipeName");
-        var socketsHttpHandler = new SocketsHttpHandler
-        {
-            ConnectCallback = connectionFactory.ConnectAsync
-        };
-
-        grpcChannel = GrpcChannel.ForAddress("http://localhost", new GrpcChannelOptions
-        {
-            HttpHandler = socketsHttpHandler
-        });
-
-        //TODO: There is probably a better way to handle this hardcoded Path here
-        _recorder = new Recorder<IMUDataMessage>(@"C:\Users\flori\Documents\HumanMusicController\SensorReceiverServer\Recordings");
+        _recorder = recorder;
+        _grpcChannel = grpcChannel;
     }
 
 
@@ -38,8 +25,10 @@ public class IMUController : ControllerBase
     [Route("imu/receiveData")]
     public async Task<ActionResult> ReceiveData([FromForm] string justSomething)
     {
-        var grpcService = new SensorIPCService.SensorIPCServiceClient(grpcChannel);
-        var imuDataMessage = new IMUDataMessage() { Name = "test", X = 1, Y = 1, Z = 1, Gx = 1, Gy = 1, Gz = 1 };
+        _logger.LogWarning(justSomething);
+        var data = justSomething.Split(',');
+        var grpcService = new SensorIPCService.SensorIPCServiceClient(_grpcChannel);
+        var imuDataMessage = new IMUDataMessage() { Name = "test", X = float.Parse(data[0], CultureInfo.InvariantCulture.NumberFormat), Y = float.Parse(data[1], CultureInfo.InvariantCulture.NumberFormat), Z = float.Parse(data[2], CultureInfo.InvariantCulture.NumberFormat), Gx = float.Parse(data[3], CultureInfo.InvariantCulture.NumberFormat), Gy = float.Parse(data[4], CultureInfo.InvariantCulture.NumberFormat), Gz = float.Parse(data[5], CultureInfo.InvariantCulture.NumberFormat) };
         await grpcService.SendIMUDataAsync(imuDataMessage);
         _recorder.ReceiveData(imuDataMessage);
         return Ok();

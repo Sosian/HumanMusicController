@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace GrpcClient
 {
-    public class Recorder<T>
+    public class Recorder<T> : IRecorder<T>
     {
         private readonly Stopwatch stopwatch;
         private readonly string fullPath;

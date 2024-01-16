@@ -29,3 +29,18 @@ Checklist:
 ** Monitor does not turn of for at least an hour
 ** Same for going to sleep
 * Click in the screen for the visualization sound
+
+
+https://rbnrpi.wordpress.com/2017/01/27/sonic-pi-remote-gui-to-control-playstop-and-the-starting-position-within-a-piece/
+https://github.com/sonic-pi-net/sonic-pi
+
+TODO: Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+' was not in a correct format.The input string '-0POST /imu/receiveData HTTP/1.1
+
+Data from IMU:
+
+x example Data: 0.0009, -0.064, -0.15, 0.18, 0.4, -0.5, 0.67, 0.9, 1.21, 0.9 (gerade?)
+y example Data: 0.314 (gerade?), 0.8, 1.1
+z example Data: -0.114/1.002 (gerade?)
+
