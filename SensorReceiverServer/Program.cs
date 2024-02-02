@@ -32,8 +32,9 @@ var app = builder.Build();
 
 app.MapControllers();
 
-if (args.Length > 0 && args[0].ToLower() == "Replay")
+if (args.Length > 0 && args[0].ToLower() == "replay")
 {
+    app.Logger.LogInformation("Replaying with " + args[1]);
     if (args.Length <= 1)
         throw new ArgumentException("Please supply Recordings FileName, thanks");
 
@@ -45,5 +46,8 @@ if (args.Length > 0 && args[0].ToLower() == "Replay")
         replayer.Play(recordingsFile);
     }
 }
+
+app.Logger.LogInformation("Running Server");
+
 
 app.Run();

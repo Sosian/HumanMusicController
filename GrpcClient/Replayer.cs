@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 
 namespace GrpcClient
@@ -20,7 +21,7 @@ namespace GrpcClient
             foreach (var package in listOfReceivedPackages)
             {
                 var split = package.Split(";");
-                listOfParsedReceivedPackages.Add((long.Parse(split[0]), MessageFactory.FromStringArray(split.Skip(1).ToArray())));
+                listOfParsedReceivedPackages.Add((long.Parse(split[0]), MessageFactory.FromStringArray(JsonDocument.Parse(split.Skip(1).Single()).RootElement)));
             }
 
             var currentPackage = listOfParsedReceivedPackages.First();

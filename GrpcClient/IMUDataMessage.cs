@@ -1,21 +1,32 @@
+using System.Text.Json;
 using GrpcClient;
 
 public static class MessageFactory
 {
-    public static IMUDataMessage FromStringArray(string[] imuDataMessageParameters)
+    public static IMUDataMessage FromStringArray(JsonElement root)
     {
-        if (imuDataMessageParameters.Length != 7)
-            throw new ArgumentException("imuDataMessageParameters seems to not have the required 7 fields. Something is wrong");
         //TODO: This will have to be altered everytime IMUDataMessage is changed. Is there a better way?
         return new IMUDataMessage()
         {
-            Name = imuDataMessageParameters[0],
-            X = float.Parse(imuDataMessageParameters[1]),
-            Y = float.Parse(imuDataMessageParameters[2]),
-            Z = float.Parse(imuDataMessageParameters[3]),
-            Gx = float.Parse(imuDataMessageParameters[4]),
-            Gy = float.Parse(imuDataMessageParameters[5]),
-            Gz = float.Parse(imuDataMessageParameters[6]),
+            Name = root.GetProperty("name").GetString(),
+            X = GetPropertyValueOrZero(root, "x"),
+            Y = GetPropertyValueOrZero(root, "y"),
+            Z = GetPropertyValueOrZero(root, "z"),
+            Gx = GetPropertyValueOrZero(root, "gx"),
+            Gy = GetPropertyValueOrZero(root, "gy"),
+            Gz = GetPropertyValueOrZero(root, "gz"),
         };
+    }
+
+    private static float GetPropertyValueOrZero(JsonElement jsonElement, string propertyName)
+    {
+        if (jsonElement.TryGetProperty(propertyName, out var property))
+        {
+            return (float)property.GetDouble();
+        }
+        else
+        {
+            return 0;
+        }
     }
 }
