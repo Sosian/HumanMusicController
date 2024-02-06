@@ -21,7 +21,7 @@ namespace GrpcClient
             if (!stopwatch.IsRunning)
                 stopwatch.Start();
 
-            var logLine = $"{stopwatch.ElapsedMilliseconds};{data.ToString()}";
+            var logLine = $"{{\"time\": {stopwatch.ElapsedMilliseconds}, \"data\": {data.ToString()}}},";
             File.AppendAllLines(fullPath, new string[] { logLine });
         }
     }
