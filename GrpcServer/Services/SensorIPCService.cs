@@ -10,18 +10,17 @@ namespace GrpcServer.Services;
 public class SensorIPCService : GrpcClient.SensorIPCService.SensorIPCServiceBase
 {
     private readonly ILogger<SensorIPCService> _logger;
-    public SensorIPCService(ILogger<SensorIPCService> logger)
+    private readonly IConductor conductor;
+
+    public SensorIPCService(ILogger<SensorIPCService> logger, IConductor conductor)
     {
         _logger = logger;
+        this.conductor = conductor;
     }
 
     public override Task<Empty> SendIMUData(IMUDataMessage request, ServerCallContext context)
     {
-        using (var udpClient = new UdpClient("127.0.0.1", 4560))
-        {
-            var message = new OscMessage(new Address("/trigger/prophet"), [request.X, request.Y]);
-            udpClient.SendMessageAsync(message);
-        }
+        conductor.ReceiveIMUDataMessage(request);
 
         return Task.FromResult(new Empty());
     }
