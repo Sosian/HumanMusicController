@@ -15,13 +15,12 @@ namespace GrpcClient
 
         public void Play(string recordFileFullPath)
         {
-            var listOfReceivedPackages = File.ReadAllLines(recordFileFullPath).ToList<string>();
+            var jsonDocument = JsonDocument.Parse(File.ReadAllText(recordFileFullPath));
             var listOfParsedReceivedPackages = new List<(long elapsedMilliseconds, IMUDataMessage imuDataMessage)>();
 
-            foreach (var package in listOfReceivedPackages)
+            foreach (var package in jsonDocument.RootElement.EnumerateArray())
             {
-                var split = package.Split(";");
-                listOfParsedReceivedPackages.Add((long.Parse(split[0]), MessageFactory.FromStringArray(JsonDocument.Parse(split.Skip(1).Single()).RootElement)));
+                listOfParsedReceivedPackages.Add((package.GetProperty("time").GetInt64(), MessageFactory.FromStringArray(package.GetProperty("data"))));
             }
 
             var currentPackage = listOfParsedReceivedPackages.First();
