@@ -4,11 +4,11 @@ using Microsoft.Extensions.Logging;
 
 namespace GrpcClient
 {
-    public class Replayer
+    public class Replayer<T>
     {
         private readonly SensorIPCService.SensorIPCServiceClient grpcClient;
 
-        public Replayer(GrpcClient.SensorIPCService.SensorIPCServiceClient grpcClient)
+        public Replayer(SensorIPCService.SensorIPCServiceClient grpcClient)
         {
             this.grpcClient = grpcClient;
         }
@@ -16,11 +16,11 @@ namespace GrpcClient
         public void Play(string recordFileFullPath)
         {
             var jsonDocument = JsonDocument.Parse(File.ReadAllText(recordFileFullPath));
-            var listOfParsedReceivedPackages = new List<(long elapsedMilliseconds, IMUDataMessage imuDataMessage)>();
+            var listOfParsedReceivedPackages = new List<(long elapsedMilliseconds, T dataMessage)>();
 
             foreach (var package in jsonDocument.RootElement.EnumerateArray())
             {
-                listOfParsedReceivedPackages.Add((package.GetProperty("time").GetInt64(), MessageFactory.FromStringArray(package.GetProperty("data"))));
+                listOfParsedReceivedPackages.Add((package.GetProperty("time").GetInt64(), MessageResolver.FromJsonToObject<T>(package.GetProperty("data"))));
             }
 
             var currentPackage = listOfParsedReceivedPackages.First();
@@ -40,7 +40,7 @@ namespace GrpcClient
 
                 if (currentPackage.elapsedMilliseconds <= stopwatch.ElapsedMilliseconds)
                 {
-                    grpcClient.SendIMUData(currentPackage.imuDataMessage);
+                    MessageResolver.SendGrpcMessage(grpcClient, currentPackage.dataMessage);
                     index++;
                     currentPackage = listOfParsedReceivedPackages[index];
                 }

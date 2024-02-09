@@ -1,4 +1,4 @@
-namespace HumanMusicController.Bluetooth
+namespace BluetoothReceiver.Bluetooth
 {
     public abstract class BleGattBase
     {

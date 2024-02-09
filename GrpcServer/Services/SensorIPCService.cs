@@ -24,4 +24,11 @@ public class SensorIPCService : GrpcClient.SensorIPCService.SensorIPCServiceBase
 
         return Task.FromResult(new Empty());
     }
+
+    public override Task<Empty> SendHeartrateData(HeartrateDataMessage request, ServerCallContext context)
+    {
+        conductor.ReceiveHeartrateDataMessage(request);
+
+        return Task.FromResult(new Empty());
+    }
 }

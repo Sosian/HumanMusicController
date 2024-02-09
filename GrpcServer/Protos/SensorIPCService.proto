@@ -4,6 +4,12 @@ option csharp_namespace = "GrpcClient";
 
 service SensorIPCService {
   rpc SendIMUData (IMUDataMessage) returns (Empty);
+  rpc SendHeartrateData (HeartrateDataMessage) returns (Empty);
+}
+
+message HeartrateDataMessage {
+  string name = 1;
+  int32 heartrate = 2;
 }
 
 message IMUDataMessage {

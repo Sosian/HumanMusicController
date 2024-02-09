@@ -3,7 +3,7 @@ using Windows.Devices.Enumeration;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Devices.Bluetooth;
 
-namespace HumanMusicController.Bluetooth
+namespace BluetoothReceiver.Bluetooth
 {
     public class BleDeviceSession
     {

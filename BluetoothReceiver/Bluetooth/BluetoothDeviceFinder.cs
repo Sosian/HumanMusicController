@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Devices.Enumeration;
 
-namespace HumanMusicController.Bluetooth
+namespace BluetoothReceiver.Bluetooth
 {
     public class BluetoothDeviceFinder
     {

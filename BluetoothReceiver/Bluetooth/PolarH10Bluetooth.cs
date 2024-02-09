@@ -1,9 +1,10 @@
 ﻿using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Storage.Streams;
 using Microsoft.Extensions.Logging;
-using HumanMusicController.Connectors;
+using Grpc.Net.Client;
+using GrpcClient;
 
-namespace HumanMusicController.Bluetooth
+namespace BluetoothReceiver.Bluetooth
 {
     public class PolarH10Bluetooth : BleGattBase
     {
@@ -12,18 +13,22 @@ namespace HumanMusicController.Bluetooth
         Guid HR_SERVICE = new Guid("0000180D-0000-1000-8000-00805f9b34fb");
 
         private readonly BleDeviceSession deviceSession;
-        private readonly IConnector connector;
+        private readonly IRecorder<HeartrateDataMessage> recorder;
+        private readonly GrpcChannel grpcChannel;
 
-        public PolarH10Bluetooth(ILogger<PolarH10Bluetooth> logger, BleDeviceSession deviceSession, IConnector connector)
+        public PolarH10Bluetooth(ILogger<PolarH10Bluetooth> logger, BleDeviceSession deviceSession, IRecorder<HeartrateDataMessage> recorder, GrpcChannel grpcChannel)
         {
-            this.connector = connector;
             this.logger = logger;
             this.deviceSession = deviceSession;
+            this.recorder = recorder;
+            this.grpcChannel = grpcChannel;
         }
 
-        public async void Start()
+        public async Task Start()
         {
+            logger.LogInformation("Before Configured Service For NotificationsAsync");
             await ConfigureServiceForNotificationsAsync();
+            logger.LogInformation("After Configured Service For NotificationsAsync");
         }
 
         private async Task ConfigureServiceForNotificationsAsync()
@@ -36,7 +41,7 @@ namespace HumanMusicController.Bluetooth
             }
             catch (Exception e)
             {
-                logger.LogWarning("Error configuring HRP device", e);
+                logger.LogWarning("Error configuring HRP device");
                 logger.LogWarning($"Exception: {e}");
                 logger.LogWarning($"Exception Message: {e.Message}");
                 logger.LogWarning("Bluetooth HRP device initialization failed");
@@ -89,7 +94,10 @@ namespace HumanMusicController.Bluetooth
             var test = ($"heartRateMeasurementValue: {heartRateMeasurementValue}");
             logger.LogDebug($"Data = {test}");
 
-            connector.ReceiveData(new HrPayload(heartRateMeasurementValue));
+            var grpcService = new SensorIPCService.SensorIPCServiceClient(grpcChannel);
+            var heartrateDataMessage = new HeartrateDataMessage() { Name = "heartrate", Heartrate = heartRateMeasurementValue };
+            grpcService.SendHeartrateDataAsync(heartrateDataMessage);
+            recorder.ReceiveData(heartrateDataMessage);
         }
 
         private int mapRr1024ToRrMs(int rrsRaw)

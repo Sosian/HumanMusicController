@@ -3,6 +3,7 @@ using GrpcClient;
 public interface IConductor
 {
     void ReceiveIMUDataMessage(IMUDataMessage iMUDataMessage);
+    void ReceiveHeartrateDataMessage(HeartrateDataMessage heartrateDataMessage);
 }
 
 public class Conductor : IConductor
@@ -34,5 +35,10 @@ public class Conductor : IConductor
         drum2.PlayDrum(iMUDataMessage.Gx);
         drum3.PlayDrum(iMUDataMessage.Gz);
         synth.PlaySynth(iMUDataMessage.X);
+    }
+
+    public void ReceiveHeartrateDataMessage(HeartrateDataMessage heartrateDataMessage)
+    {
+
     }
 }

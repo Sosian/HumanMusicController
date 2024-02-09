@@ -39,7 +39,7 @@ if (args.Length > 0 && args[0].ToLower() == "replay")
         throw new ArgumentException("Please supply Recordings FileName, thanks");
 
     var recordingsFile = recordingsPath + @"\" + args[1];
-    var replayer = new Replayer(new SensorIPCService.SensorIPCServiceClient(grpcChannel));
+    var replayer = new Replayer<IMUDataMessage>(new SensorIPCService.SensorIPCServiceClient(grpcChannel));
 
     while (true)
     {
