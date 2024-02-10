@@ -1,4 +1,4 @@
-[{"time": 0, "data": { "name": "heartrate", "heartrate": 72 }},
+[{"time": 0, "data": { "name": "heartrate", "heartrate": 5 }},
 {"time": 970, "data": { "name": "heartrate", "heartrate": 72 }},
 {"time": 1929, "data": { "name": "heartrate", "heartrate": 71 }},
 {"time": 2949, "data": { "name": "heartrate", "heartrate": 71 }},

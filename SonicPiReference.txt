@@ -5,3 +5,17 @@ live_loop :synth do
   play a, release: 5
   sleep 1
 end
+
+Speed change:
+loop do
+  use_real_time
+  a = sync "/osc*/speed"
+  set(:bpm, a[0])
+end
+
+live_loop :drum1 do
+  play 50
+  
+  use_bpm get(:bpm)
+  sleep 1
+end
