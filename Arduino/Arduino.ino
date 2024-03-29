@@ -4,7 +4,7 @@
 #include <avr/dtostrf.h>
 #include "arduino_secrets.h"
 
-#define SERVER "192.168.0.178"
+#define SERVER "192.168.0.136"
 #define SERVERPORT 8080
 
 #define TOTAL_WAIT_TIME 60000 // 1 minute

@@ -23,6 +23,9 @@ Color Palette:
 * * arduino-cli compile Arduino.ino -b arduino:samd:nano_33_iot -p COM3
 
 Possible Tasks:
+* Find other ways to scale the values
+* Use average speed to control something
+* How to switch between modes?
 
 Checklist:
 * Windows Energy Settings
@@ -44,3 +47,7 @@ x example Data: 0.0009, -0.064, -0.15, 0.18, 0.4, -0.5, 0.67, 0.9, 1.21, 0.9 (st
 y example Data: 0.314 (straight?), 0.8, 1.1
 z example Data: -0.114, 1.002 (straight?)
 gx/gy/gz: ~0, +- 150
+
+https://www.open.edu/openlearn/history-the-arts/music/an-introduction-music-theory/content-section-3.10.2
+
+osc testing: https://github.com/yoggy/sendosc?tab=readme-ov-file
