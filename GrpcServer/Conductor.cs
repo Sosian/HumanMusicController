@@ -16,18 +16,33 @@ public class Conductor : IConductor
     private readonly Speed speedY;
     private readonly Speed speedZ;
 
-    private readonly int[,] mappingArraySpeed = {
+    private readonly int[,] mappingArraySpeedX = {
             {0, 15, 50, 75, 100, 125, 150, 175, 200, 225, 250},
-            {1000, 950, 900, 800, 700, 600, 500, 400, 300, 200, 100}
+            {1000, 900, 800, 700, 600, 500, 400, 300, 20, 100, 50}
+        };
+
+    private readonly double[,] mappingArraySynthX = {
+        {0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1},
+        {150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700, 725, 750, 775, 800, 850, 900}
+    };
+
+    private readonly int[,] mappingArraySpeedY = {
+            {0, 15, 50, 75, 100, 125, 150, 175, 200, 225, 250},
+            {4000, 3600, 3200, 3000, 2750, 2500, 2000, 1500, 1000, 500, 250}
+        };
+
+    private readonly int[,] mappingArraySpeedZ = {
+            {0, 15, 50, 75, 100, 125, 150, 175, 200, 225, 250},
+            {3000, 2750, 2000, 1750, 1500, 1250, 1000, 750, 500, 250, 100}
         };
 
     public Conductor(ILogger<Conductor> logger, IOscSender oscSender)
     {
         this.logger = logger;
         this.oscSender = oscSender;
-        speedX = new Speed(oscSender, "gx", mappingArraySpeed);
-        speedY = new Speed(oscSender, "gy", mappingArraySpeed);
-        speedZ = new Speed(oscSender, "gz", mappingArraySpeed);
+        speedX = new Speed(oscSender, "gx", mappingArraySpeedX);
+        speedY = new Speed(oscSender, "gy", mappingArraySpeedY);
+        speedZ = new Speed(oscSender, "gz", mappingArraySpeedZ);
     }
 
     public void PlayManually()
@@ -37,7 +52,7 @@ public class Conductor : IConductor
 
     public void ReceiveIMUDataMessage(IMUDataMessage iMUDataMessage)
     {
-        //speedX.SetSpeed(iMUDataMessage.Gx);
+        speedX.SetSpeed(iMUDataMessage.Gx);
         speedY.SetSpeed(iMUDataMessage.Gy);
         speedZ.SetSpeed(iMUDataMessage.Gz);
     }

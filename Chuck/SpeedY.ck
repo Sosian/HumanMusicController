@@ -5,20 +5,20 @@
 //----------------------------------------------------------------------------
 
 // the patch
-SinOsc osc1 => ADSR env1 => dac;
+// our patch: sine oscillator -> dac
+SinOsc s => dac;
 
-1500::ms => dur beat;
-
-0.15 => osc1.gain;
-(5::ms, beat / 4, 0, 1::ms) => env1.set;
+30 => int freq;
+100:ms => dur beat;
 
 spork ~ ReceiveOscMessage();
-
-// infinite event loop
+// infinite time loop
 while( true )
 {
-    55 => Std.mtof => osc1.freq;
-    1 => env1.keyOn;
+    // randomly choose frequency from 30 to 1000
+    freq => s.freq;
+
+    // advance time by 100 millisecond
     beat => now;
 }
 
@@ -42,8 +42,6 @@ fun void ReceiveOscMessage()
         {
             // fetch the first data element as int
             msg.getInt(0)::ms => beat;
-            //<<< "New Beat Y: ", beat >>>;
-            
         }
     }
 }

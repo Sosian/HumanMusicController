@@ -5,24 +5,25 @@
 //----------------------------------------------------------------------------
 
 // the patch
-SinOsc osc1 => ADSR env1 => dac;
+// our patch: sine oscillator -> dac
+SinOsc s => dac;
 
-1000::ms => dur beat;
+150 => int freq;
+100::ms => dur beat;
 
-0.15 => osc1.gain;
-(1::ms, beat / 4, 0, 1::ms) => env1.set;
-
-spork ~ ReceiveOscMessage();
-
-// infinite event loop
+spork ~ ReceiveSpeedOscMessage();
+spork ~ ReceiveFreqOscMessage();
+// infinite time loop
 while( true )
 {
-    60 => Std.mtof => osc1.freq;
-    1 => env1.keyOn;
+    // randomly choose frequency from 30 to 1000
+    freq => s.freq;
+
+    // advance time by 100 millisecond
     beat => now;
 }
 
-fun void ReceiveOscMessage()
+fun void ReceiveSpeedOscMessage()
 {
     while (true)
     {
@@ -42,7 +43,30 @@ fun void ReceiveOscMessage()
         {
             // fetch the first data element as int
             msg.getInt(0)::ms => beat;
-            //<<< "New Beat X: ", beat >>>;
+        }
+    }
+}
+
+fun void ReceiveFreqOscMessage()
+{
+    while (true)
+    {
+        // create our OSC receiver
+        OscIn oin;
+        // create our OSC message
+        OscMsg msg;
+
+        4560 => oin.port;
+        // create an address in the receiver, expect an int and a float
+        oin.addAddress( "/freq/x" );
+        // wait for event to arrive
+        oin => now;
+
+        // grab the next message from the queue. 
+        while( oin.recv(msg) )
+        {
+            // fetch the first data element as int
+            msg.getInt(0) => freq;
         }
     }
 }

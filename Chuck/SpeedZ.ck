@@ -7,10 +7,10 @@
 // the patch
 SinOsc osc1 => ADSR env1 => dac;
 
-2000::ms => dur beat;
+3000::ms => dur beat;
 
 0.15 => osc1.gain;
-(1::ms, beat / 4, 0, 10::ms) => env1.set;
+(1::ms, beat / 8, 0, 10::ms) => env1.set;
 
 spork ~ ReceiveOscMessage();
 
