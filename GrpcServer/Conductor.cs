@@ -13,8 +13,12 @@ public class Conductor : IConductor
     private readonly ILogger<Conductor> logger;
     private readonly IOscSender oscSender;
     private readonly Speed speedX;
+    private readonly Synth synthX;
     private readonly Speed speedY;
     private readonly Speed speedZ;
+
+    private int millisecondsWait = 0;
+    private Stopwatch stopwatch;
 
     private readonly int[,] mappingArraySpeedX = {
             {0, 15, 50, 75, 100, 125, 150, 175, 200, 225, 250},
@@ -41,6 +45,8 @@ public class Conductor : IConductor
         this.logger = logger;
         this.oscSender = oscSender;
         speedX = new Speed(oscSender, "gx", mappingArraySpeedX);
+        synthX = new Synth(oscSender, logger, "x", mappingArraySynthX);
+
         speedY = new Speed(oscSender, "gy", mappingArraySpeedY);
         speedZ = new Speed(oscSender, "gz", mappingArraySpeedZ);
     }
@@ -52,9 +58,17 @@ public class Conductor : IConductor
 
     public void ReceiveIMUDataMessage(IMUDataMessage iMUDataMessage)
     {
-        speedX.SetSpeed(iMUDataMessage.Gx);
-        speedY.SetSpeed(iMUDataMessage.Gy);
-        speedZ.SetSpeed(iMUDataMessage.Gz);
+        if (millisecondsWait == 0 || stopwatch?.ElapsedMilliseconds > millisecondsWait)
+        {
+
+            millisecondsWait = speedX.SetSpeed(iMUDataMessage.Gx);
+            synthX.PlaySynth(iMUDataMessage.X);
+            stopwatch = Stopwatch.StartNew();
+        }
+
+
+        // speedY.SetSpeed(iMUDataMessage.Gy);
+        // speedZ.SetSpeed(iMUDataMessage.Gz);
     }
 
     public void ReceiveHeartrateDataMessage(HeartrateDataMessage heartrateDataMessage)

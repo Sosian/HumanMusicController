@@ -17,7 +17,12 @@ public class Speed
         this.mappingArray = mappingArray;
     }
 
-    public void SetSpeed(float value)
+    public int SetSpeed(float value)
+    {
+        return SendSpeed(value);
+    }
+
+    public void SetSpeedWithWait(float value)
     {
         if (millisecondsWait == 0 || stopwatch?.ElapsedMilliseconds > millisecondsWait)
         {

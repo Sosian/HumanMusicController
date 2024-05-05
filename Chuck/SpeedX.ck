@@ -12,7 +12,10 @@ SinOsc s => dac;
 100::ms => dur beat;
 
 spork ~ ReceiveSpeedOscMessage();
-spork ~ ReceiveFreqOscMessage();
+spork ~ ReceiveNoteOscMessage();
+
+chout <= "test";
+chout.flush();
 // infinite time loop
 while( true )
 {
@@ -43,11 +46,13 @@ fun void ReceiveSpeedOscMessage()
         {
             // fetch the first data element as int
             msg.getInt(0)::ms => beat;
+            <<<"Beat">>>;
+            <<<beat>>>;
         }
     }
 }
 
-fun void ReceiveFreqOscMessage()
+fun void ReceiveNoteOscMessage()
 {
     while (true)
     {
@@ -58,7 +63,7 @@ fun void ReceiveFreqOscMessage()
 
         4560 => oin.port;
         // create an address in the receiver, expect an int and a float
-        oin.addAddress( "/freq/x" );
+        oin.addAddress( "/note/x" );
         // wait for event to arrive
         oin => now;
 
@@ -67,6 +72,8 @@ fun void ReceiveFreqOscMessage()
         {
             // fetch the first data element as int
             msg.getInt(0) => freq;
+            <<<"Note">>>;
+            <<<freq>>>;
         }
     }
 }
